@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load settings_value static %}
+
+{% block main %}
+
+<section class="container">
+    <h2>Project Team</h2>
+
+    <div class="team-member-name">
+        Professor Henriette van der Blom
+    </div>
+    <div class="team-member-role">
+        Principal Investigator
+    </div>
+    <img src="{% static 'images/team/henriette-van-der-blom.jpg' %}" alt="Henriette van der Blom" class="team-member-photo">
+    <p>
+        I am an ancient historian specialised in the history and political life of the Roman Republic. My research focuses on republican politics in the City of Rome, Roman oratory, all aspects of Cicero, and Roman approaches to the past. I have a strong interest in political oratory across historical periods – including current British political speech – and am the founding director of the Network for Oratory and Politics.
+    </p>
+    <p>
+        Email: <a href="mailto:h.vanderblom@bham.ac.uk">h.vanderblom@bham.ac.uk</a>
+    </p>
+
+</section>
+
+{% endblock %}

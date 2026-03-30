@@ -1,0 +1,262 @@
+
+/* ---------- General ---------- */
+
+html, body {
+    font-family: 'Inter', 'Helvetica', sans-serif;
+    background: white;
+    color: black;
+    margin: 0;
+    font-weight: 300;
+
+    /* Variables */
+    --color-primary: #c23616;
+    --color-primary-dark: #9d2b11;
+    --color-primary-light: #e45332;
+    --color-red: #B40107;
+    --color-green: #27ae60;
+    --color-purple: #8e44ad;
+}
+
+.display-small,
+.display-large {
+    display: none;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    font-weight: bold;
+}
+
+a:hover {
+    color: var(--color-primary-dark);
+    text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+.team-member-name {
+    font-family: "Cinzel", serif;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 1.3rem;
+}
+
+h2 {
+    font-size: 1.7em;
+    margin: 1em 0 1.3em 0;
+    line-height: 1em;
+    font-weight: 600;
+    text-align: center;
+    color: var(--color-primary);
+}
+
+h3 {
+    font-size: 1.5em;
+    line-height: 1em;
+    font-weight: 600;
+    margin: 3em 0 0.5em 0;
+    padding: 0.1em 0;
+    width: fit-content;
+    color: var(--color-primary);
+}
+
+h4 {
+    font-weight: 600;
+    line-height: 1em;
+    font-size: 1.4em;
+    margin: 1em 0 0.5em 0;
+    padding: 0.1em 0;
+    width: fit-content;
+}
+
+section {
+    padding: 2.7em 0;
+}
+
+p {
+    margin: 1em auto;
+    line-height: 1.3em;
+}
+
+strong {
+    font-weight: 600;
+}
+
+em {
+    font-style: italic;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td,
+th {
+    border: 1px solid var(--color-primary-dark);
+    padding: 0.3em;
+}
+
+th {
+    font-weight: bold;
+    text-align: center;
+}
+
+.clearfloat {
+    clear: both;
+}
+
+.image-circle {
+    border-radius: 100%;
+    width: 13em;
+    max-width: 90%;
+    display: block;
+    margin: 1em auto;
+}
+
+.hidden {
+    display: none;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.rtl {
+    text-align: right;
+}
+
+/* ---------- Navigation ---------- */
+
+nav {
+    background-color: white;
+    vertical-align: middle;
+    color: white;
+    font-family: "Times New Roman", Times, serif;
+    text-transform: uppercase;
+}
+
+.navbar {
+    padding: 0 0.5em;
+}
+
+.navbar-brand {
+    display: inline-block;
+    font-size: 1.2em;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+    color: var(--color-primary);
+}
+
+.navbar-nav {
+    letter-spacing: 0.05em;
+}
+
+.nav-link {
+    font-weight: 300;
+    font-size: 1.13em;
+}
+
+.nav-link.active {
+    font-weight: 600;
+}
+
+nav a:hover {
+    opacity: 0.95;
+}
+
+nav hr {
+    margin: 0.5em 0;
+}
+
+/* ---------- Main ---------- */
+
+main {
+    font-size: 1.1em;
+}
+
+main a {
+    text-decoration: none;
+}
+
+/* ---------- Welcome ---------- */
+
+#welcome-banner {
+    width: 100%;
+    background-image: url('../images/welcome/welcome-banner.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-color: black;
+}
+
+#welcome-footer {
+    font-size: 0.95em;
+    padding: 5em 0;
+    text-align: center;
+}
+
+#welcome-footer-content-text {
+    margin-top: 2em;
+}
+
+#welcome-footer-content img {
+    height: 4.5em;
+    margin: 0 1em 1em 1em;
+    display: inline-block;
+}
+
+/* ---------- Team ---------- */
+
+.team-member-name {
+    margin-top: 5em;
+    color: var(--color-primary);
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.team-member-role {
+    text-align: center;
+    font-size: 1.1rem;
+    margin: 0.5em 0 1em 0;
+    font-weight: bold;
+}
+
+.team-member-photo {
+    display: block;
+    margin: 1em auto;
+    width: 13em;
+    border-radius: 100%;
+    border: 0.4rem solid var(--color-primary);
+}
+
+/* ---------- Error Pages ---------- */
+
+.errorpage-path {
+    font-weight: 500;
+}
+
+.errorpage-code {
+    margin-top: 3em;
+    font-size: 0.8em;
+}

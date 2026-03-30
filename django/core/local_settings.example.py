@@ -22,6 +22,9 @@ ALLOWED_HOSTS = ['*']/['romanrepublicanspeech.bham.ac.uk']
 # Provide the email address for the site admin (e.g. the researcher/research team)
 ADMIN_EMAIL = '...@bham.ac.uk'
 
+# Provide the email address for users to contact the project (e.g. the PI or project email)
+MAIN_CONTACT_EMAIL = '...@bham.ac.uk'
+
 # Set the database name below
 DATABASES = {
     'default': {

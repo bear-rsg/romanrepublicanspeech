@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static settings_value %}
+
+{% block main %}
+
+<section class="colorbg"></section>
+
+<section class="lightbg">
+    <div class="container">
+        <!-- Title -->
+        <h2>{{ object }}</h2>
+        <!-- Image -->
+        {% if object.image and object.image_show %}
+            <div id="storydetail-image">
+                <img src="{{ object.image.url }}" alt="Story image">
+            </div>
+        {% endif %}
+        <!-- Video -->
+        {% if object.video_youtube_id %}
+            <div id="storydetail-video" class="video-container">
+                <iframe src="https://www.youtube.com/embed/{{ object.video_youtube_id }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+        {% endif %}
+        <!-- Text -->
+        <div id="storydetail-text">{{ object.text | safe }}</div>
+    </div>
+</section>
+
+<section class="colorbg"></section>
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static settings_value %}
+
+{% block main %}
+
+    <div id="welcome-banner"></div>
+
+    <section class="container">
+        <h2>Welcome</h2>
+        <p>
+            ...
+        </p>
+    </section>
+
+    <section id="welcome-footer">
+        <!-- Content -->
+        <div id="welcome-footer-content" class="container">
+
+            <div id="welcome-footer-content-logos">
+                <a href="https://www.birmingham.ac.uk/" target="_blank"><img src="{% static 'images/logos/logo-uob.png' %}" alt="Birmingham University logo"></a>
+            </div>
+
+            <div id="welcome-footer-content-text">
+                <p>
+                    This website has been developed for <em>The Invention of Roman Republican Speech</em> research project
+                    <br>
+                    led by <a href="https://www.birmingham.ac.uk/staff/profiles/caha/van-der-blom-henriette" target="_blank">Professor Henriette van der Blom </a> of the <a href="https://www.birmingham.ac.uk/about/college-of-arts-and-law" target="_blank">College of Arts and Law</a> at the <a href="https://www.birmingham.ac.uk/" target="_blank">University of Birmingham</a>
+                </p>
+                <p>
+                    Contact: <a href="mailto:{% settings_value 'MAIN_CONTACT_EMAIL' %}">{% settings_value 'MAIN_CONTACT_EMAIL' %}</a>
+                </p>
+                <p>
+                    <a href="https://www.birmingham.ac.uk/privacy/index.aspx" target="_blank">Privacy</a> |
+                    <a href="https://www.birmingham.ac.uk/legal/index.aspx" target="_blank">Legal</a> |
+                    <a href="https://www.birmingham.ac.uk/university/governance/policies-regs/information/index.aspx" target="_blank">Freedom of Information</a> |
+                    <a href="{% url 'general:cookies' %}">Cookies</a> |
+                    <a href="https://accessibility.bear.bham.ac.uk/" target="_blank">Accessibility</a>
+                </p>
+                <p>
+                    © University of Birmingham {% now "Y" %}
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+{% endblock %}

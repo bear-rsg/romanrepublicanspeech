@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
-app_name = 'general'
+app_name = 'researchdata'
 
 
 class ThisAppConfig(AppConfig):
