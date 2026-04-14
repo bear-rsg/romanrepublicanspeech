@@ -33,6 +33,9 @@ class CiceroAsSource(SimpleModelAbstract):
 class CitizenStatus(SimpleModelAbstract):
     """ The status of the citizen, e.g. Roman, Romans, Italian, Foreigner """
 
+    class Meta:
+        verbose_name_plural = 'citizen statuses'
+
 
 class CourtType(SimpleModelAbstract):
     """ The different types of court, e.g. Criminal, Civil """
