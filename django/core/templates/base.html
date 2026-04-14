@@ -60,15 +60,15 @@
                 <ul class="navbar-nav ml-auto">
                     <!-- Welcome -->
                     <li class="nav-item">
-                        <a class="nav-link{% if request.path == "/" %} active{% endif %}" href="{% url 'general:welcome' %}">Welcome</a>
+                        <a class="nav-link{% if request.path == "/" %} active{% endif %}" href="{% url 'general:welcome' %}">Home</a>
                     </li>
                     <!-- About -->
                     <li class="nav-item">
                         <a class="nav-link{% if "/about/" in request.path %} active{% endif %}" href="{% url 'general:about' %}">About</a>
                     </li>
-                    <!-- Team -->
+                    <!-- Publications -->
                     <li class="nav-item">
-                        <a class="nav-link{% if "/team/" in request.path %} active{% endif %}" href="{% url 'general:team' %}">Team</a>
+                        <a class="nav-link{% if "/publications-and-presentations/" in request.path %} active{% endif %}" href="{% url 'general:publications' %}">Publications & Presentations</a>
                     </li>
                     {% if user.is_staff %}
                         <!-- Admin Dashboard -->

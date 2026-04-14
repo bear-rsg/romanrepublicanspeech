@@ -228,7 +228,7 @@ main a {
 /* ---------- Team ---------- */
 
 .team-member-name {
-    margin-top: 5em;
+    margin-top: 2em;
     color: var(--color-primary);
     text-align: center;
     font-size: 1.3rem;
@@ -248,6 +248,12 @@ main a {
     width: 13em;
     border-radius: 100%;
     border: 0.4rem solid var(--color-primary);
+}
+
+/* ---------- Publications and Presentations ---------- */
+
+#publicationsandpresentations li {
+    margin: 0.8em 0;
 }
 
 /* ---------- Error Pages ---------- */

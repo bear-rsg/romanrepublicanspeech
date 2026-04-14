@@ -15,11 +15,11 @@ class AboutTemplateView(TemplateView):
     template_name = 'general/about.html'
 
 
-class TeamTemplateView(TemplateView):
+class PublicationsTemplateView(TemplateView):
     """
-    Class-based view to show the team template
+    Class-based view to show the publications template
     """
-    template_name = 'general/team.html'
+    template_name = 'general/publications.html'
 
 
 class AccessibilityTemplateView(TemplateView):
