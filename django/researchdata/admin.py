@@ -58,10 +58,10 @@ class GenericAdminView(admin.ModelAdmin):
     Or if you don't need to customise it just register a model, e.g.:
     admin.site.register([model name], GenericAdminView)
     """
-    list_display = ('name',)
-    list_display_links = ('name',)
-    list_per_page = 100
-    search_fields = ('name',)
+    list_display = ('id', 'name',)
+    list_display_links = ('id', 'name',)
+    list_per_page = 50
+    search_fields = ('id', 'name',)
 
     def get_actions(self, request):
         actions = super().get_actions(request)
@@ -84,7 +84,7 @@ admin.site.register(models.CiceroAsSource, GenericAdminView)
 admin.site.register(models.CitizenStatus, GenericAdminView)
 admin.site.register(models.CourtType, GenericAdminView)
 admin.site.register(models.OratoricalExemplumType, GenericAdminView)
-admin.site.register(models.Speaker, GenericAdminView)
+admin.site.register(models.OratorInCiceroBrutusType, GenericAdminView)
 admin.site.register(models.SpeechType, GenericAdminView)
 admin.site.register(models.TimePeriod, GenericAdminView)
 admin.site.register(models.Venue, GenericAdminView)
@@ -98,7 +98,7 @@ admin.site.register(models.VenueType, GenericAdminView)
 class OratorAdminView(GenericAdminView):
     """ Customise the admin interface for Orator model """
 
-    list_display = ('name',)
+    list_display = ('id', 'name',)
     search_fields = ('name',)
 
 
@@ -115,25 +115,38 @@ class AuthorAdminView(GenericAdminView):
 class WorkAdminView(GenericAdminView):
     """ Customise the admin interface for Work model """
 
-    list_display = ('name', 'author')
-    search_fields = ('name',)
+    list_display = ('id', 'name', 'author')
+    search_fields = ('id', 'name',)
 
 
 @admin.register(models.Passage)
 class PassageAdminView(GenericAdminView):
     """ Customise the admin interface for Passage model """
 
-    list_display = ('name', 'work')
-    search_fields = ('name', 'work__name')
+    list_display = ('id', 'name', 'work')
+    search_fields = ('id', 'name', 'work__name')
 
 
 @admin.register(models.OratorInPassage)
 class OratorInPassageAdminView(GenericAdminView):
     """ Customise the admin interface for OratorInPassage model """
 
-    list_display = ('id', 'passage', 'orator', 'content_summary')
+    list_display = (
+        'id',
+        'passage',
+        'orator',
+        'content_summary',
+        'speeches',
+        'content',
+        'context',
+        'venue',
+        'speech_type',
+        'citizen_status',
+        'time_period',
+        'precise_date_order',
+    )
     list_display_links = ('id',)
-    search_fields = ('name', 'work__name', 'orator__name', 'content_summary')
+    search_fields = ('id', 'passage__name', 'orator__name', 'content_summary')
     list_filter = (
         'published',
         'oratorical_exemplum',
@@ -142,6 +155,23 @@ class OratorInPassageAdminView(GenericAdminView):
         'context',
         'content',
         'court_type',
-        'non_magistrate_senator'
+        'athens',
+        'non_magistrate_senator',
+        'liminal_speaker_women'
     )
     actions = (publish, unpublish)
+
+
+@admin.register(models.OratorInCiceroBrutus)
+class OratorInCiceroBrutusAdminView(GenericAdminView):
+    """ Customise the admin interface for OratorInCiceroBrutus model """
+
+    list_display = (
+        'id',
+        'name',
+        'type',
+        'presented_as_an_orator',
+        'not_in_sumners_register',
+        'greek_orators_in_sumner'
+    )
+    search_fields = ('id', 'name', 'type__name')

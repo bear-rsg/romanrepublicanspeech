@@ -29,6 +29,10 @@ class SimpleModelAbstract(models.Model):
 class CiceroAsSource(SimpleModelAbstract):
     """ The different options for whether Cicero is the source of a speech """
 
+    class Meta:
+        ordering = [Upper('name'), 'id']
+        verbose_name_plural = 'cicero as source'
+
 
 class CitizenStatus(SimpleModelAbstract):
     """ The status of the citizen, e.g. Roman, Romans, Italian, Foreigner """
@@ -45,8 +49,12 @@ class OratoricalExemplumType(SimpleModelAbstract):
     """ The type of oratorical examplum, e.g. Roman or External """
 
 
-class Speaker(SimpleModelAbstract):
-    """ The type of person who delivers a speech """
+class OratorInCiceroBrutusType(SimpleModelAbstract):
+    """ The type of orator in Cicero, Brutus """
+
+    class Meta:
+        ordering = ['id']
+        verbose_name_plural = 'orators in cicero brutus types'
 
 
 class SpeechType(SimpleModelAbstract):
@@ -160,12 +168,19 @@ class OratorInPassage(models.Model):
     venue = models.ForeignKey(Venue, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
     venue_type = models.ForeignKey(VenueType, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
     citizen_status = models.ForeignKey(CitizenStatus, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
-    non_magistrate_senator = models.BooleanField(default=False)
+    athens = models.BooleanField(default=False, verbose_name='Athens (democratic)')
+    non_magistrate_senator = models.BooleanField(default=False, verbose_name='non-magistrate senator')
     time_period = models.ForeignKey(TimePeriod, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
-    court = models.CharField(max_length=1000, blank=True, null=True)
+    precise_date = models.CharField(max_length=1000, blank=True, null=True)
+    precise_date_order = models.IntegerField(blank=True, null=True, help_text='Number used to sort records by precise date, BC = negative, AD = positive')
     court_type = models.ForeignKey(CourtType, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
     court_type_details = models.TextField(blank=True, null=True)
+    liminal_speaker_non_elite = models.BooleanField(default=False)
+    liminal_speaker_non_roman = models.BooleanField(default=False)
+    liminal_speaker_women = models.BooleanField(default=False)
     cicero_as_source = models.ForeignKey(CiceroAsSource, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
+    oratorical_exemplum = models.BooleanField(default=False)
+    cicero_work_used = models.TextField(blank=True, null=True)
     research_notes = models.TextField(blank=True, null=True)
     published = models.BooleanField(default=True, help_text='Uncheck this box to hide this record on the public interface')
 
@@ -178,3 +193,30 @@ class OratorInPassage(models.Model):
     class Meta:
         ordering = ['passage', 'orator', 'id']
         verbose_name_plural = 'orators in passages'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['passage', 'orator'], 
+                name='unique_passage_per_orator'
+            )
+        ]
+
+
+class OratorInCiceroBrutus(models.Model):
+    """
+    An orator in Cicero, Brutus (treated separately from main Orators)
+    """
+
+    related_name = 'orators_in_cicero_brutus'
+
+    name = models.CharField(max_length=1000)
+    type = models.ForeignKey(OratorInCiceroBrutusType, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
+    presented_as_an_orator = models.BooleanField(default=False)
+    not_in_sumners_register = models.BooleanField(default=False, verbose_name="Not in Sumner's register")
+    greek_orators_in_sumner = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = [Upper('name'), 'id']
+        verbose_name_plural = 'orators in cicero brutus'

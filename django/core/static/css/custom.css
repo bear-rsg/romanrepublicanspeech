@@ -209,6 +209,14 @@ main a {
     background-color: black;
 }
 
+#welcome-bannercredit {
+    text-align: right;
+    font-size: 0.8em;
+    padding: 0.2em 0.5em;
+    opacity: 0.8;
+    font-style: italic;
+}
+
 #welcome-footer {
     font-size: 0.95em;
     padding: 5em 0;
