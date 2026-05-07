@@ -66,9 +66,15 @@
                     <li class="nav-item">
                         <a class="nav-link{% if "/about/" in request.path %} active{% endif %}" href="{% url 'general:about' %}">About</a>
                     </li>
-                    <!-- Publications -->
-                    <li class="nav-item">
-                        <a class="nav-link{% if "/publications-and-presentations/" in request.path %} active{% endif %}" href="{% url 'general:publications' %}">Publications & Presentations</a>
+                    <!-- Outputs -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLinkOutputs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Outputs
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkOutputs">
+                            <a class="dropdown-item" href="{% url 'general:presentations' %}">Presentations</a>
+                            <a class="dropdown-item" href="{% url 'general:publications' %}">Publications</a>
+                        </div>
                     </li>
                     {% if user.is_staff %}
                         <!-- Admin Dashboard -->

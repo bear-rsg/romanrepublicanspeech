@@ -260,7 +260,8 @@ main a {
 
 /* ---------- Publications and Presentations ---------- */
 
-#publicationsandpresentations li {
+#publications li,
+#presentations li {
     margin: 0.8em 0;
 }
 

@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     # 3rd Party
     'debug_toolbar',
+    'ckeditor',
     # Custom
     'account',
     'general',
@@ -160,6 +161,28 @@ LOGGING = {
             'propagate': 'True',
         },
     },
+}
+
+
+# CKEditor
+SILENCED_SYSTEM_CHECKS = ["ckeditor.W001"]
+# Configuration
+# For full list of configurations, see: https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html
+# For full list of toolbar buttons, see: https://ckeditor.com/latest/samples/toolbarconfigurator/index.html#advanced
+CKEDITOR_CONFIGS = {
+    'default': {
+        'height': 100,
+        'toolbar_CustomToolbarConfig': [
+            {'name': 'styles', 'items': ['FontSize']},
+            {'name': 'basicstyles', 'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript']},
+            {'name': 'paragraph',
+             'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-',
+                       'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
+            {'name': 'links', 'items': ['Link', 'Unlink']},
+            {'name': 'tools', 'items': ['Maximize']},
+        ],
+        'toolbar': 'CustomToolbarConfig',
+    }
 }
 
 

@@ -26,7 +26,6 @@ def unpublish(modeladmin, request, queryset):
 unpublish.short_description = "Unpublish selected items (will not appear on main site)"
 
 
-
 #
 # 1. Reusable code
 #
@@ -123,8 +122,9 @@ class WorkAdminView(GenericAdminView):
 class PassageAdminView(GenericAdminView):
     """ Customise the admin interface for Passage model """
 
-    list_display = ('id', 'name', 'work')
+    list_display = ('id', 'name', 'name_ordering', 'work')
     search_fields = ('id', 'name', 'work__name')
+    exclude = ('name_ordering',)
 
 
 @admin.register(models.OratorInPassage)

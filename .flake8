@@ -1,0 +1,11 @@
+[flake8]
+exclude = 
+	.git,
+	local_settings.example.py,
+	migrations,
+	__pycache__,
+	venv,
+	private,
+	xml
+ignore = F405, F403, W503, W504, E123
+max-line-length = 500

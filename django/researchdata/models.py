@@ -1,6 +1,8 @@
 from django.db import models
-from django.urls import reverse
+# from django.urls import reverse
 from django.db.models.functions import Upper
+from ckeditor.fields import RichTextField
+import re
 
 
 # 1. Secondary Models
@@ -13,10 +15,17 @@ class SimpleModelAbstract(models.Model):
     See: https://docs.djangoproject.com/en/4.0/topics/db/models/#abstract-base-classes
     """
 
-    name = models.CharField(max_length=1000, db_index=True)
+    name = RichTextField()
+    name_clean = models.TextField(blank=True, null=True)  # removes html tags, used for order and search
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        # Set value of name_clean automatically (used for ordering and searching)
+        clean_regex = re.compile('<.*?>')
+        self.name_clean = re.sub(clean_regex, '', self.name)
+        super().save(*args, **kwargs)
 
     class Meta:
         abstract = True
@@ -140,12 +149,17 @@ class Passage(models.Model):
 
     work = models.ForeignKey(Work, related_name=related_name, on_delete=models.RESTRICT)
     name = models.CharField(max_length=1000, db_index=True)
+    name_ordering = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        self.name_ordering = re.sub(r'\d+', lambda m: m.group().zfill(3), self.name)
+        super().save(*args, **kwargs)
+
     class Meta:
-        ordering = [Upper('name'), 'id']
+        ordering = [Upper('name_ordering'), 'id']
 
 
 class OratorInPassage(models.Model):
@@ -160,8 +174,8 @@ class OratorInPassage(models.Model):
     orator = models.ForeignKey(Orator, related_name=related_name, on_delete=models.RESTRICT)
     oratorical_exemplum = models.BooleanField(default=True)
     oratorical_exemplum_type = models.ForeignKey(OratoricalExemplumType, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
-    content_summary = models.TextField(blank=True, null=True)
-    speeches = models.TextField(blank=True, null=True)
+    content_summary = RichTextField(blank=True, null=True)
+    speeches = RichTextField(blank=True, null=True)
     content = models.BooleanField(default=False)
     context = models.BooleanField(default=False)
     speech_type = models.ForeignKey(SpeechType, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
@@ -174,14 +188,14 @@ class OratorInPassage(models.Model):
     precise_date = models.CharField(max_length=1000, blank=True, null=True)
     precise_date_order = models.IntegerField(blank=True, null=True, help_text='Number used to sort records by precise date, BC = negative, AD = positive')
     court_type = models.ForeignKey(CourtType, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
-    court_type_details = models.TextField(blank=True, null=True)
+    court_type_details = RichTextField(blank=True, null=True)
     liminal_speaker_non_elite = models.BooleanField(default=False)
     liminal_speaker_non_roman = models.BooleanField(default=False)
     liminal_speaker_women = models.BooleanField(default=False)
     cicero_as_source = models.ForeignKey(CiceroAsSource, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
     oratorical_exemplum = models.BooleanField(default=False)
-    cicero_work_used = models.TextField(blank=True, null=True)
-    research_notes = models.TextField(blank=True, null=True)
+    cicero_work_used = RichTextField(blank=True, null=True)
+    research_notes = RichTextField(blank=True, null=True)
     published = models.BooleanField(default=True, help_text='Uncheck this box to hide this record on the public interface')
 
     def __str__(self):
@@ -195,7 +209,7 @@ class OratorInPassage(models.Model):
         verbose_name_plural = 'orators in passages'
         constraints = [
             models.UniqueConstraint(
-                fields=['passage', 'orator'], 
+                fields=['passage', 'orator'],
                 name='unique_passage_per_orator'
             )
         ]

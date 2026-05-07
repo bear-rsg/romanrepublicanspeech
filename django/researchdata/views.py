@@ -1,11 +1,4 @@
-from django.views.generic import (DetailView, ListView, TemplateView, View)
-from django.db.models.functions import Lower
-from django.db.models import (Count, Q, CharField, TextField, Prefetch)
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
-from django.urls import reverse
-from django.conf import settings
-from functools import reduce
-from operator import (or_, and_)
+from django.http import HttpResponse
 from datetime import datetime
 from . import models
 import csv
