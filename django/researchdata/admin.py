@@ -61,6 +61,7 @@ class GenericAdminView(admin.ModelAdmin):
     list_display_links = ('id', 'name',)
     list_per_page = 50
     search_fields = ('id', 'name',)
+    exclude = ('name_clean',)
 
     def get_actions(self, request):
         actions = super().get_actions(request)
