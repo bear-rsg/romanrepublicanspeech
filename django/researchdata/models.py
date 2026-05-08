@@ -19,7 +19,7 @@ class SimpleModelAbstract(models.Model):
     name_clean = models.TextField(blank=True, null=True)  # removes html tags, used for order and search
 
     def __str__(self):
-        return self.name
+        return self.name_clean
 
     def save(self, *args, **kwargs):
         # Set value of name_clean automatically (used for ordering and searching)
