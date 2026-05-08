@@ -185,7 +185,7 @@ CKEDITOR_CONFIGS = {
         'enterMode': 2,  # 1: <p>, 2: <br>, 3: <div>
         'shiftEnterMode': 1,  # 1: <p>, 2: <br>, 3: <div>
         'fillEmptyBlocks': False,
-        'autoParagraph': False, # Prevents wrapping existing content in <p> on load
+        'autoParagraph': False,  # Prevents wrapping existing content in <p> on load
     }
 }
 
