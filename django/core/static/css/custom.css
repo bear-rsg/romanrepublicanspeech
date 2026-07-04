@@ -9,9 +9,9 @@ html, body {
     font-weight: 300;
 
     /* Variables */
-    --color-primary: #c23616;
-    --color-primary-dark: #9d2b11;
-    --color-primary-light: #e45332;
+    --color-primary: #A42C10;
+    --color-primary-dark: rgb(120, 31, 11);
+    --color-primary-light: #c33b1c;
     --color-red: #B40107;
     --color-green: #27ae60;
     --color-purple: #8e44ad;
