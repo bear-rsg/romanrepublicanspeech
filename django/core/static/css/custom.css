@@ -9,9 +9,9 @@ html, body {
     font-weight: 300;
 
     /* Variables */
-    --color-primary: #c23616;
-    --color-primary-dark: #9d2b11;
-    --color-primary-light: #e45332;
+    --color-primary: #972910;
+    --color-primary-dark: #6a1d0b;
+    --color-primary-light: #bb381a;
     --color-red: #B40107;
     --color-green: #27ae60;
     --color-purple: #8e44ad;
@@ -104,7 +104,7 @@ table {
 
 td,
 th {
-    border: 1px solid var(--color-primary-dark);
+    border: 1px solid black;
     padding: 0.3em;
 }
 
