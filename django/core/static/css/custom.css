@@ -258,6 +258,226 @@ main a {
     border: 0.4rem solid var(--color-primary);
 }
 
+/* ---------- Database ---------- */
+
+/* List */
+
+#dblist-header {
+    background: #DDD;
+    color: #202020;
+    padding: 0.3em;
+    font-size: 0.9em;
+}
+
+#dblist-header div {
+    display: inline-block;
+    margin-right: 3em;
+}
+
+#dblist-header label {
+    font-weight: 500;
+    font-size: 0.9em;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#dblist-header input {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#dblist-header a {
+    background: #303030;
+    color: white;
+    padding: 0.2em 1em;
+    border-radius: 0.4em;
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: 500;
+    font-size: 0.9em;
+}
+
+#dblist-header a:hover {
+    background: #404040;
+}
+
+#dblist-body {
+    overflow-y: auto;
+    max-height: calc(100vh - 5.3em);
+}
+
+#dblist-body thead th {
+    position: sticky;
+    top: -1px;
+    background-color: black;
+    color: white;
+    z-index: 1;
+    padding: 0.2em;
+    box-shadow: inset 0 4px 0 0 #000, 
+                inset 0 -4px 0 0 #000;
+    cursor: pointer;
+    user-select: none;
+}
+
+#dblist-body thead th:not(.filter-active):hover {
+    background: #272727;
+}
+
+#dblist-body table {
+    font-size: 0.9rem;
+}
+
+#dblist-body table tbody td {
+    line-height: 1em;
+    height: 1em;
+    overflow: hidden;
+    width: 10em;
+    cursor: pointer;
+}
+
+#dblist-body table tbody tr:hover {
+    background: #F5F5F5;
+}
+
+#dblist-body .cell-wrapper {
+    max-height: 2em;
+    overflow: hidden;
+    position: relative;
+}
+
+#dblist-body tr.expanded .cell-wrapper {
+    max-height: fit-content; 
+}
+
+#dblist-body-thead-menu {
+    display: none;
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 10px;
+    z-index: 1000;
+    min-width: 150px;
+    border-radius: 4px;
+}
+
+.dblist-body-thead-menu-section {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.dblist-body-thead-menu-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.dblist-body-thead-menu-section button {
+    font-size: 0.8rem;
+}
+
+.dblist-body-thead-menu-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 5px;
+    margin-bottom: 5px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.dblist-body-thead-menu-btn:hover {
+    background: #eee;
+}
+
+#dblist-body.filter-item {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#dblist-body-thead-menu .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #888;
+}
+
+#dblist-body-thead-menu .close-btn:hover {
+    color: #d9534f;
+}
+
+#dblist-body-thead-menu #filterList {
+    max-height: 15em;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #eee;
+    padding: 5px;
+    margin-top: 5px;
+    background: #fafafa;
+}
+
+#dblist-body-thead-menu .filter-item {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+#dblist-body-thead-menu .filter-action-btn {
+    font-size: 0.8rem;
+    padding: 3px 6px;
+    margin-right: 5px;
+    cursor: pointer;
+    background: #eee;
+    border: 1px solid #ccc;
+}
+
+#dblist-body .filter-action-btn:hover {
+    background: #ddd;
+}
+
+#dblist-body th.filter-active {
+    background-color: #cdffdc;
+    color: #1cb757;
+}
+
+/* Detail */
+
+#dbdetail-header-adminlink {
+    float: right;
+    padding: 0.3em 0.8em;
+    display: block;
+    width: fit-content;
+    margin-bottom: 0.5em;
+    border-radius: 1em;
+    background: var(--color-primary);
+    color: white;
+    font-size: 0.95em;
+    font-weight: 500;
+}
+
+#dbdetail-header h2 {
+    clear: both;
+    padding-top: 1em;
+}
+
+.dbdetail-body-detail {
+    display: block;
+    margin: 1em auto;
+}
+
+.dbdetail-body-detail label {
+    display: block;
+    font-weight: 500;
+}
+
+.dbdetail-body-detail span {
+    display: block;
+}
+
 /* ---------- Publications and Presentations ---------- */
 
 #publications li,

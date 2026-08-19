@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+
+<div id="dbdetail" class="container">
+    <!-- Header -->
+    <div id="dbdetail-header">
+        <a id="dbdetail-header-adminlink" href="{{ admin_url }}">View in Admin</a>
+        <h2>{{ object }}</h2>
+    </div>
+    <!-- Body -->
+    <div id="dbdetail-body">
+        {% for detail in details %}
+            {% if detail.value %}
+                <div class="dbdetail-body-detail">
+                    <label>{{ detail.label }}</label>
+                    <span>{{ detail.value }}</span>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

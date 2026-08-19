@@ -1,0 +1,18 @@
+{% extends "researchdata/dblist.html" %}
+{% load static %}
+
+{% block dblistbodytitles %}
+<th>Orator</th>
+<th>Type</th>
+<th>Presented as an Orator</th>
+<th>Not in Sumner's register</th>
+<th>Greek Orator in Sumner</th>
+{% endblock %}
+
+{% block dblistbodydata %}
+<td>{{ object.name }}</td>
+<td>{{ object.type }}</td>
+<td>{{ object.presented_as_an_orator }}</td>
+<td>{{ object.not_in_sumners_register }}</td>
+<td>{{ object.greek_orators_in_sumner }}</td>
+{% endblock %}

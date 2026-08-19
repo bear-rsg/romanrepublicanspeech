@@ -1,0 +1,12 @@
+{% extends "researchdata/dblist.html" %}
+{% load static %}
+
+{% block dblistbodytitles %}
+<th>Passage</th>
+<th>Work</th>
+{% endblock %}
+
+{% block dblistbodydata %}
+<td>{{ object.name }}</td>
+<td>{{ object.work }}</td>
+{% endblock %}
