@@ -62,6 +62,10 @@
                     <li class="nav-item">
                         <a class="nav-link{% if request.path == "/" %} active{% endif %}" href="{% url 'general:welcome' %}">Home</a>
                     </li>
+                    <!-- Database -->
+                    <li class="nav-item">
+                        <a class="nav-link{% if "/data/" in request.path %} active{% endif %}" href="{% url 'researchdata:dblist-oratorsinpassages' %}">Database</a>
+                    </li>
                     <!-- About -->
                     <li class="nav-item">
                         <a class="nav-link{% if "/about/" in request.path %} active{% endif %}" href="{% url 'general:about' %}">About</a>

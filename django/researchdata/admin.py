@@ -83,6 +83,7 @@ class GenericAdminView(admin.ModelAdmin):
 admin.site.register(models.CiceroAsSource, GenericAdminView)
 admin.site.register(models.CitizenStatus, GenericAdminView)
 admin.site.register(models.CourtType, GenericAdminView)
+admin.site.register(models.OratoricalEpisode, GenericAdminView)
 admin.site.register(models.OratoricalExemplumType, GenericAdminView)
 admin.site.register(models.OratorInCiceroBrutusType, GenericAdminView)
 admin.site.register(models.SpeechType, GenericAdminView)
@@ -158,7 +159,10 @@ class OratorInPassageAdminView(GenericAdminView):
         'court_type',
         'athens',
         'non_magistrate_senator',
-        'liminal_speaker_women'
+        'liminal_speaker_non_elite',
+        'liminal_speaker_non_roman',
+        'liminal_speaker_women',
+        'cicero_as_source',
     )
     actions = (publish, unpublish)
 
@@ -176,3 +180,9 @@ class OratorInCiceroBrutusAdminView(GenericAdminView):
         'greek_orators_in_sumner'
     )
     search_fields = ('id', 'name', 'type__name')
+    list_filter = (
+        'type',
+        'presented_as_an_orator',
+        'not_in_sumners_register',
+        'greek_orators_in_sumner'
+    )

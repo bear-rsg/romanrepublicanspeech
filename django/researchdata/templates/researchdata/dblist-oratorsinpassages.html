@@ -1,0 +1,58 @@
+{% extends "researchdata/dblist.html" %}
+{% load static %}
+
+{% block dblistbodytitles %}
+<th>Passage</th>
+<th>Orator</th>
+<th>Oratorical exemplum</th>
+<th>Oratorical exemplum type</th>
+<th>Content summary</th>
+<th>Speeches</th>
+<th>Content</th>
+<th>Context</th>
+<th>Speech type</th>
+<th>Venue</th>
+<th>Venue type</th>
+<th>Citizen status</th>
+<th>Athens</th>
+<th>Non-magistrate senator</th>
+<th>Time period</th>
+<th>Precise date</th>
+<th>Court type</th>
+<th>Court type details</th>
+<th>Liminal speaker (non-elite)</th>
+<th>Liminal speaker (non-Roman)</th>
+<th>Liminal speaker (women)</th>
+<th>Cicero as source</th>
+<th>Oratorical exemplum</th>
+<th>Cicero work used</th>
+<th>Research notes</th>
+{% endblock %}
+
+{% block dblistbodydata %}
+<td>{% if object.passage %}{{ object.passage }}{% endif %}</td>
+<td>{% if object.orator %}{{ object.orator }}{% endif %}</td>
+<td>{% if object.oratorical_exemplum %}{{ object.oratorical_exemplum }}{% endif %}</td>
+<td>{% if object.oratorical_exemplum_type %}{{ object.oratorical_exemplum_type }}{% endif %}</td>
+<td>{% if object.content_summary %}{{ object.content_summary }}{% endif %}</td>
+<td>{% if object.speeches %}{{ object.speeches }}{% endif %}</td>
+<td>{% if object.content %}{{ object.content }}{% endif %}</td>
+<td>{% if object.context %}{{ object.context }}{% endif %}</td>
+<td>{% if object.speech_type %}{{ object.speech_type }}{% endif %}</td>
+<td>{% if object.venue %}{{ object.venue }}{% endif %}</td>
+<td>{% if object.venue_type %}{{ object.venue_type }}{% endif %}</td>
+<td>{% if object.citizen_status %}{{ object.citizen_status }}{% endif %}</td>
+<td>{% if object.athens %}{{ object.athens }}{% endif %}</td>
+<td>{% if object.non_magistrate_senator %}{{ object.non_magistrate_senator }}{% endif %}</td>
+<td>{% if object.time_period %}{{ object.time_period }}{% endif %}</td>
+<td>{% if object.precise_date %}{{ object.precise_date }}{% endif %}</td>
+<td>{% if object.court_type %}{{ object.court_type }}{% endif %}</td>
+<td>{% if object.court_type_details %}{{ object.court_type_details }}{% endif %}</td>
+<td>{% if object.liminal_speaker_non_elite %}{{ object.liminal_speaker_non_elite }}{% endif %}</td>
+<td>{% if object.liminal_speaker_non_roman %}{{ object.liminal_speaker_non_roman }}{% endif %}</td>
+<td>{% if object.liminal_speaker_women %}{{ object.liminal_speaker_women }}{% endif %}</td>
+<td>{% if object.cicero_as_source %}{{ object.cicero_as_source }}{% endif %}</td>
+<td>{% if object.oratorical_exemplum %}{{ object.oratorical_exemplum }}{% endif %}</td>
+<td>{% if object.cicero_work_used %}{{ object.cicero_work_used }}{% endif %}</td>
+<td>{% if object.research_notes %}{{ object.research_notes }}{% endif %}</td>
+{% endblock %}

@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+
+<div id="dblist">
+    <!-- Header -->
+    <div id="dblist-header">
+        <!-- View -->
+        <div id="dblist-header-view">
+            <label for="dblist-header-view-select">View</label>
+            <select id="dblist-header-view-select">
+                <option value="oratorsinpassages">Orators in Passages</option>
+                <option value="orators">Orators</option>
+                <option value="passages">Passages</option>
+                <option value="oratorsincicerobrutus">Orators in Cicero Brutus</option>
+            </select>
+        </div>
+        <!-- Search -->
+        <div id="dblist-header-search">
+            <input type="text" id="dblist-header-search-input" name="search" title="search" placeholder="Search">
+        </div>
+        <!-- Zoom -->
+        <div id="dblist-header-zoom">
+            <label for="dblist-header-zoom-input">Zoom</label>
+            <input type="range" id="dblist-header-zoom-input" min="0.5" max="1.5" step="0.01" value="1.0">
+            <span id="dblist-header-zoom-value">100%</span>
+        </div>
+        <!-- Help -->
+        <div id="dblist-header-help">
+            <a href="{% url 'researchdata:dblist-help' %}" target="_blank">
+                <i class="fas fa-info-circle"></i> Help Guide
+            </a>
+        </div>
+    </div>
+    <!-- Body -->
+    <div id="dblist-body">
+        <!-- Main data table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Row</th>
+                    {% block dblistbodytitles %}{% endblock %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in object_list %}
+                    <tr title="{{ object }}" data-id="{{ object.id }}">
+                        <td>{{ forloop.counter }}</td>
+                        {% block dblistbodydata %}{% endblock %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Pop up menu when clicking on thead cells -->
+        <div id="dblist-body-thead-menu">
+            <div class="dblist-body-thead-menu-header">
+                <span id="menuColumnName">Options</span>
+                <button class="close-btn" id="closeMenu">&times;</button>
+            </div>
+            
+            <div class="dblist-body-thead-menu-section">
+                <button class="dblist-body-thead-menu-btn" id="sortAsc">Sort Ascending (A-Z)</button>
+                <button class="dblist-body-thead-menu-btn" id="sortDesc">Sort Descending (Z-A)</button>
+            </div>
+            
+            <div class="dblist-body-thead-menu-section" id="filterContainer">
+                <strong>Filter by:</strong><br>
+                <div style="margin-top: 5px;">
+                    <button class="filter-action-btn" id="selectAllFilters">Select All</button>
+                    <button class="filter-action-btn" id="unselectAllFilters">Unselect All</button>
+                </div>
+                <div id="filterList"></div>
+            </div>
+            
+            <div class="dblist-body-thead-menu-section">
+                <button class="dblist-body-thead-menu-btn" id="clearFilter">Clear All Filters</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+
+    // Navigate to the page when user changes the 'view' select list
+    $('#dblist-header-view-select').change(function(){
+        window.location.href = '/data/' + this.value;
+    });
+
+    // Load view from url
+    $('#dblist-header-view-select').val(window.location.pathname.split('/').filter(Boolean).pop());
+
+    // Wrap every table cell with a class
+    $('table td').wrapInner('<div class="cell-wrapper"></div>');
+
+    // Clicking on a cell will expand/collapse the content for that row
+    $('table td').on('click', function() {
+        $(this).closest('tr').toggleClass('expanded');
+    });
+
+    // Right clicking on a data row will open the detail page
+    $('table tr:not(:first)').on('contextmenu', function(e){
+        e.preventDefault();
+        // Get the current URL without query parameters or hashes
+        let baseUrl = window.location.origin + window.location.pathname;
+        // Ensure the URL ends with a trailing slash
+        if (!baseUrl.endsWith('/')) baseUrl += '/';
+        // Open the detail page in new window
+        window.open(`${baseUrl}${$(this).data('id')}/`, '_blank');
+    });
+
+    // Listen for changes on the range slider
+    $('#dblist-header-zoom-input').on('input change', function() {
+        var currentSize = $(this).val();
+        $('#dblist-body table').css('font-size', currentSize + 'rem');
+        $('#dblist-header-zoom-value').text(Math.round(currentSize * 100) + '%');
+    });
+
+    //
+    // Search, filter, sort
+    //
+
+    // Listen to the free-text search box
+    $('#dblist-header-search-input').on('input', function() {
+        applyCurrentFilters(); 
+    });
+
+    let currentColumnIndex = -1;
+    
+    // THE BRAIN: Stores active filters for all columns
+    // Format: { columnIndex: ['Value1', 'Value2'] }
+    let filterState = {}; 
+
+    // 1. Show popup when clicking a header
+    $('#dblist-body table th').on('click', function(e) {
+        currentColumnIndex = $(this).index();
+        let thOffset = $(this).offset();
+        let columnName = $(this).text();
+
+        $('#menuColumnName').text(columnName);
+
+        // Populate filter options based on the global state
+        populateFilters(currentColumnIndex);
+
+        $('#dblist-body-thead-menu').css({
+            top: thOffset.top + $(this).outerHeight(),
+            left: thOffset.left
+        }).show();
+        
+        e.stopPropagation(); 
+    });
+
+    // 2. Dismissal Logic
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('#dblist-body-thead-menu, th').length) {
+            $('#dblist-body-thead-menu').hide();
+        }
+    });
+
+    $('#dblist-body-thead-menu').on('click', function(e) {
+        e.stopPropagation(); 
+    });
+
+    $('#closeMenu').on('click', function() {
+        $('#dblist-body-thead-menu').hide();
+    });
+
+    // 3. Extract unique values and build checkboxes based on State
+    function populateFilters(colIndex) {
+        let uniqueValues = new Set();
+        
+        // Always read from ALL rows so options don't disappear when filtered
+        $('#dblist-body table tbody tr').each(function() {
+            let cellText = $(this).find('td').eq(colIndex).text().trim();
+            uniqueValues.add(cellText);
+        });
+
+        let html = '';
+        Array.from(uniqueValues).sort().forEach(val => {
+            // Check for empty string first, then handle the 50-char truncation
+            let displayVal = val === "" ? "[Blank cell]" : (val.length > 50 ? val.substring(0, 50) + '...' : val);
+            
+            // Also update the hover title so it doesn't show a blank tooltip
+            let hoverTitle = val === "" ? "[Blank cell]" : val;
+            
+            // Check state: If column isn't in filterState, default to checked.
+            let isChecked = true;
+            if (filterState[colIndex] !== undefined) {
+                isChecked = filterState[colIndex].includes(val);
+            }
+            let checkedAttr = isChecked ? 'checked' : '';
+
+            html += `<label class="filter-item" title="${hoverTitle}">
+                        <input type="checkbox" class="col-filter-check" value="${val}" ${checkedAttr}> 
+                        ${displayVal}
+                     </label>`;
+        });
+        
+        $('#filterList').html(html);
+    }
+
+    // 4. Update State and Apply Multi-Column Filters
+    function applyCurrentFilters() {
+        let selectedValues = [];
+        let totalCheckboxes = $('.col-filter-check').length;
+        
+        // Grab the search term and make it lowercase for case-insensitive matching
+        let searchTerm = $('#dblist-header-search-input').val().toLowerCase().trim();
+        
+        $('.col-filter-check:checked').each(function() {
+            selectedValues.push($(this).val());
+        });
+
+        if (selectedValues.length === totalCheckboxes) {
+            delete filterState[currentColumnIndex];
+            $('#dblist-body table th').eq(currentColumnIndex).removeClass('filter-active');
+        } else {
+            filterState[currentColumnIndex] = selectedValues;
+            $('#dblist-body table th').eq(currentColumnIndex).addClass('filter-active');
+        }
+
+        // Loop through all rows and test against BOTH the Brain and the Search Box
+        $('#dblist-body table tbody tr').each(function() {
+            let row = $(this);
+            let showRow = true; // Assume true until proven otherwise
+
+            // 1. Test against the Brain (Checkbox Filters)
+            for (let col in filterState) {
+                let cellValue = row.find('td').eq(col).text().trim();
+                if (!filterState[col].includes(cellValue)) {
+                    showRow = false;
+                    break; 
+                }
+            }
+
+            // 2. Test against the Search Box (if the row passed the checkbox test)
+            if (showRow && searchTerm !== "") {
+                // Get all text in the row, make it lowercase, and search it
+                let rowText = row.text().toLowerCase();
+                if (!rowText.includes(searchTerm)) {
+                    showRow = false;
+                }
+            }
+
+            // 3. Execute
+            if (showRow) row.show();
+            else row.hide();
+        });
+
+        updateRecordCount();
+    }
+
+    // Attach listener to dynamically created checkboxes
+    $('#filterList').on('change', '.col-filter-check', function() {
+        applyCurrentFilters();
+    });
+
+    // 5. Select / Unselect All
+    $('#selectAllFilters').on('click', function() {
+        $('.col-filter-check').prop('checked', true);
+        applyCurrentFilters();
+    });
+
+    $('#unselectAllFilters').on('click', function() {
+        $('.col-filter-check').prop('checked', false);
+        applyCurrentFilters();
+    });
+
+    // 6. Clear ALL Filters (Resets table entirely)
+    $('#clearFilter').on('click', function() {
+        filterState = {}; // Wipe the brain
+        $('#dblist-body table tbody tr').show();
+        $('#dblist-body table th').removeClass('filter-active');
+        $('#dblist-body-thead-menu').hide();
+
+        updateRecordCount();
+    });
+
+    // 7. Sorting Logic (Naturally single-column)
+    function sortTable(order) {
+        let rows = $('#dblist-body table tbody tr').get();
+        
+        rows.sort(function(a, b) {
+            let valA = $(a).find('td').eq(currentColumnIndex).text().trim().toLowerCase();
+            let valB = $(b).find('td').eq(currentColumnIndex).text().trim().toLowerCase();
+
+            if (!isNaN(valA) && !isNaN(valB)) {
+                valA = parseFloat(valA);
+                valB = parseFloat(valB);
+            }
+
+            if (valA < valB) return order === 'asc' ? -1 : 1;
+            if (valA > valB) return order === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        $.each(rows, function(index, row) {
+            $('#dblist-body table tbody').append(row);
+        });
+
+        $('#dblist-body-thead-menu').hide();
+    }
+
+    $('#sortAsc').on('click', function() { sortTable('asc'); });
+    $('#sortDesc').on('click', function() { sortTable('desc'); });
+
+    // Calculate and update the visible record count
+    function updateRecordCount() {
+        let totalRows = $('#datatable tbody tr').length;
+        let visibleRows = $('#datatable tbody tr:visible').length;
+        if (visibleRows === totalRows) {
+            $('#showing').text(`Showing ${visibleRows} records`);
+        } else {
+            $('#showing').text(`Showing ${visibleRows} records of ${totalRows}`);
+        }
+    }
+
+});
+</script>
+
+{% endblock %}

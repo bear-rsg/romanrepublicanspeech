@@ -48,55 +48,71 @@ def insert_initial_orator_in_passage(apps, schema_editor):
             work = models.Work.objects.get(name='Facta et dicta memorabilia')
 
             for record in records:
-                # Create the OratorInPassage object, if mandatory data exists
+                # Create the OratorInPassage object, if mandatory data exists and is not a duplicate
                 passage = record['passage']
                 orator = record['orator']
-                if passage and orator:
-                    try:
-                        # Create with mandatory fields
-                        with transaction.atomic():
-                            oip_object = models.OratorInPassage.objects.create(
-                                passage=models.Passage.objects.get_or_create(name=passage, work=work)[0],
-                                orator=models.Orator.objects.get_or_create(name=orator)[0]
-                            )
-                            # Add data for optional fields
+                content_summary = record['content_summary']
+                is_new_oip = models.OratorInPassage.objects.filter(
+                    passage__name=passage, orator__name=orator, content_summary=content_summary
+                ).count() == 0 or orator in [None, '']
+                if passage and is_new_oip:
+                    # Create with mandatory fields
+                    with transaction.atomic():
+                        oip_object = models.OratorInPassage.objects.create(
+                            passage=models.Passage.objects.get_or_create(name=passage, work=work)[0],
+                            orator=models.Orator.objects.get_or_create(name=orator)[0]
+                        )
+                        # Add data for optional fields
+                        if len(record['oratorical_exemplum_type']):
                             oip_object.oratorical_exemplum_type = models.OratoricalExemplumType.objects.get_or_create(name=record['oratorical_exemplum_type'])[0]
+                        if len(record['content_summary']):
                             oip_object.content_summary = record['content_summary']
+                        if len(record['speeches']):
                             oip_object.speeches = record['speeches']
-                            if len(record['context']):
-                                oip_object.context = record['context']
-                            if len(record['content']):
-                                oip_object.content = record['content']
+                        if len(record['context']):
+                            oip_object.context = record['context']
+                        if len(record['content']):
+                            oip_object.content = record['content']
+                        if len(record['speech_type']):
                             oip_object.speech_type = models.SpeechType.objects.get_or_create(name=record['speech_type'])[0]
+                        if len(record['venue']):
                             oip_object.venue = models.Venue.objects.get_or_create(name=record['venue'])[0]
+                        if len(record['venue_type']):
                             oip_object.venue_type = models.VenueType.objects.get_or_create(name=record['venue_type'])[0]
+                        if len(record['citizen_status']):
                             oip_object.citizen_status = models.CitizenStatus.objects.get_or_create(name=record['citizen_status'])[0]
-                            if len(record['athens']):
-                                oip_object.athens = record['athens']
-                            if len(record['non_magistrate_senator']):
-                                oip_object.non_magistrate_senator = record['non_magistrate_senator']
+                        if len(record['athens']):
+                            oip_object.athens = record['athens']
+                        if len(record['non_magistrate_senator']):
+                            oip_object.non_magistrate_senator = record['non_magistrate_senator']
+                        if len(record['forensic']):
+                            oip_object.forensic = record['forensic']
+                        if len(record['time_period']):
                             oip_object.time_period = models.TimePeriod.objects.get_or_create(name=record['time_period'])[0]
+                        if len(record['precise_date']):
                             oip_object.precise_date = record['precise_date']
-                            if len(record['precise_date_order']):
-                                oip_object.precise_date_order = int(record['precise_date_order'])
+                        if len(record['precise_date_order']):
+                            oip_object.precise_date_order = int(record['precise_date_order'])
+                        if len(record['court_type']):
                             oip_object.court_type = models.CourtType.objects.get_or_create(name=record['court_type'])[0]
+                        if len(record['court_type_details']):
                             oip_object.court_type_details = record['court_type_details']
-                            if len(record['liminal_speaker_non_elite']):
-                                oip_object.liminal_speaker_non_elite = record['liminal_speaker_non_elite']
-                            if len(record['liminal_speaker_non_roman']):
-                                oip_object.liminal_speaker_non_roman = record['liminal_speaker_non_roman']
-                            if len(record['liminal_speaker_women']):
-                                oip_object.liminal_speaker_women = record['liminal_speaker_women']
+                        if len(record['liminal_speaker_non_elite']):
+                            oip_object.liminal_speaker_non_elite = record['liminal_speaker_non_elite']
+                        if len(record['liminal_speaker_non_roman']):
+                            oip_object.liminal_speaker_non_roman = record['liminal_speaker_non_roman']
+                        if len(record['liminal_speaker_women']):
+                            oip_object.liminal_speaker_women = record['liminal_speaker_women']
+                        if len(record['cicero_as']):
                             oip_object.cicero_as_source = models.CiceroAsSource.objects.get_or_create(name=record['cicero_as'])[0]
-                            if len(record['oratorical_exemplum']):
-                                oip_object.oratorical_exemplum = record['oratorical_exemplum']
+                        if len(record['oratorical_exemplum']):
+                            oip_object.oratorical_exemplum = record['oratorical_exemplum']
+                        if len(record['cicero_work_used']):
                             oip_object.cicero_work_used = record['cicero_work_used']
+                        if len(record['research_notes']):
                             oip_object.research_notes = record['research_notes']
-                            # Apply changes to object in db
-                            oip_object.save()
-
-                    except IntegrityError:
-                        continue  # ignore duplicate records
+                        # Apply changes to object in db
+                        oip_object.save()
 
     except FileNotFoundError as err:
         print(err)

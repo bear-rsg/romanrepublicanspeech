@@ -1,5 +1,5 @@
 from django.db import models
-# from django.urls import reverse
+from django.urls import reverse
 from django.db.models.functions import Upper
 from ckeditor.fields import RichTextField
 import re
@@ -52,6 +52,10 @@ class CitizenStatus(SimpleModelAbstract):
 
 class CourtType(SimpleModelAbstract):
     """ The different types of court, e.g. Criminal, Civil """
+
+
+class OratoricalEpisode(SimpleModelAbstract):
+    """ An episode/situation where an OratorInPassage takes place """
 
 
 class OratoricalExemplumType(SimpleModelAbstract):
@@ -171,7 +175,8 @@ class OratorInPassage(models.Model):
     related_name = 'orators_in_passages'
 
     passage = models.ForeignKey(Passage, related_name=related_name, on_delete=models.RESTRICT)
-    orator = models.ForeignKey(Orator, related_name=related_name, on_delete=models.RESTRICT)
+    orator = models.ForeignKey(Orator, related_name=related_name, on_delete=models.RESTRICT, blank=True, null=True)
+    oratorical_episode = models.ForeignKey(OratoricalEpisode, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
     oratorical_exemplum = models.BooleanField(default=True)
     oratorical_exemplum_type = models.ForeignKey(OratoricalExemplumType, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
     content_summary = RichTextField(blank=True, null=True)
@@ -183,6 +188,7 @@ class OratorInPassage(models.Model):
     venue_type = models.ForeignKey(VenueType, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
     citizen_status = models.ForeignKey(CitizenStatus, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
     athens = models.BooleanField(default=False, verbose_name='Athens (democratic)')
+    forensic = models.BooleanField(default=False)
     non_magistrate_senator = models.BooleanField(default=False, verbose_name='non-magistrate senator')
     time_period = models.ForeignKey(TimePeriod, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
     precise_date = models.CharField(max_length=1000, blank=True, null=True)
@@ -201,18 +207,12 @@ class OratorInPassage(models.Model):
     def __str__(self):
         return f'{self.passage}: {self.orator}'
 
-    # def get_absolute_url(self):
-    #     return reverse('researchdata:story-detail', args=[str(self.id)])
+    def get_absolute_url(self):
+        return reverse('researchdata:dbdetail-oratorsinpassages', args=[str(self.id)])
 
     class Meta:
         ordering = ['passage', 'orator', 'id']
         verbose_name_plural = 'orators in passages'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['passage', 'orator'],
-                name='unique_passage_per_orator'
-            )
-        ]
 
 
 class OratorInCiceroBrutus(models.Model):

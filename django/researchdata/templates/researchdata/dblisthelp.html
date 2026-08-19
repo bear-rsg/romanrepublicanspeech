@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+
+<div id="dblisthelp" class="container">
+    <h2>Database: Help Guide</h2>
+
+    <h3>Navigation</h3>
+    <p>
+        Choose an option from the 'View' select list, in the top left of the screen. This will load data from the relevant table in the database.
+    </p>
+
+    <h3>Viewing Data</h3>
+    <p>
+        Rows in the table are truncated to make it easier to navigate the data. Click on a row to expand the height of the row to view all of its data.
+    </p>
+    <p>
+        Right click on the row to view the data of a specific row in its own separate page.
+    </p>
+    <p>
+        Use the 'Zoom' slider in the top bar to adjust the size of the data, to help view it more comfortably for your specific screen size.
+    </p>
+
+    <h3>Search</h3>
+    <p>
+        Use the free text search bar at the top of the page to search for rows matching this search query within the database. The search will look through all data that appears on the screen for a match.
+    </p>
+
+    <h3>Filter</h3>
+    <p>
+        Click on the header of a column to filter rows by a specific value within that column. Once a filter is applied, the column header will be highlighted. To clear all filters, click the 'Clear all filters' button in the filter popup or refresh the page.
+    </p>
+
+    <h3>Sort</h3>
+    <p>
+        Click on the header of a column to sort the table by this column in ascending or descending order.
+    </p>
+</div>
+
+{% endblock %}
