@@ -1,7 +1,5 @@
 from django.http import HttpResponse
 from django.views.generic import ListView, DetailView, TemplateView
-from django.db.models.functions import Lower
-from django.db.models import Q
 from django.urls import reverse
 from datetime import datetime
 from . import models
