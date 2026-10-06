@@ -124,6 +124,7 @@ class OratorsInPassagesDetailView(DetailView):
             {'label': 'Venue type', 'value': self.object.venue_type},
             {'label': 'Citizen status', 'value': self.object.citizen_status},
             {'label': 'Athens', 'value': self.object.athens},
+            {'label': 'Forensic', 'value': self.object.forensic},
             {'label': 'Non-magistrate senator', 'value': self.object.non_magistrate_senator},
             {'label': 'Time period', 'value': self.object.time_period},
             {'label': 'Precise date', 'value': self.object.precise_date},
