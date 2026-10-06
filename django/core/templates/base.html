@@ -64,8 +64,16 @@
                     </li>
                     {% if user.is_staff %}
                         <!-- Database -->
-                        <li class="nav-item">
-                            <a class="nav-link{% if "/data/" in request.path %} active{% endif %}" href="{% url 'researchdata:dblist-oratorsinpassages' %}">Database</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle{% if "/data/" in request.path %} active{% endif %}" href="#" id="navbarDropdownMenuLinkOutputs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Database
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkOutputs">
+                                <a class="dropdown-item" href="{% url 'researchdata:dblist-oratorsinpassages' %}">Orators in Passages</a>
+                                <a class="dropdown-item" href="{% url 'researchdata:dblist-orators' %}">Orators</a>
+                                <a class="dropdown-item" href="{% url 'researchdata:dblist-passages' %}">Passages</a>
+                                <a class="dropdown-item" href="{% url 'researchdata:dblist-oratorsincicerobrutus' %}">Orators in Cicero Brutus</a>
+                            </div>
                         </li>
                     {% endif %}
                     <!-- About -->
@@ -74,12 +82,12 @@
                     </li>
                     <!-- Outputs -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLinkOutputs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle{% if "/outputs/" in request.path %} active{% endif %}" href="#" id="navbarDropdownMenuLinkOutputs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Outputs
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkOutputs">
-                            <a class="dropdown-item" href="{% url 'general:presentations' %}">Presentations</a>
-                            <a class="dropdown-item" href="{% url 'general:publications' %}">Publications</a>
+                            <a class="dropdown-item" href="{% url 'general:outputs-presentations' %}">Presentations</a>
+                            <a class="dropdown-item" href="{% url 'general:outputs-publications' %}">Publications</a>
                         </div>
                     </li>
                     {% if user.is_staff %}

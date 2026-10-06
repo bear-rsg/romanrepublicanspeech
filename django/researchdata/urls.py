@@ -18,6 +18,6 @@ urlpatterns = [
     # Orators in Cicero Brutus
     path('oratorsincicerobrutus/', views.OratorsInCiceroBrutusListView.as_view(), name='dblist-oratorsincicerobrutus'),
     path('oratorsincicerobrutus/<pk>/', views.OratorsInCiceroBrutusDetailView.as_view(), name='dbdetail-oratorsincicerobrutus'),
-    # Export data
-    path('export/csv/', views.export_csv, name='export-csv'),
+    # Download data
+    path('download/csv/', views.download_csv, name='download-csv'),
 ]

@@ -15,14 +15,14 @@ class AboutTemplateView(TemplateView):
     template_name = 'general/about.html'
 
 
-class PresentationsTemplateView(TemplateView):
+class OutputsPresentationsTemplateView(TemplateView):
     """
     Class-based view to show the presentations template
     """
     template_name = 'general/presentations.html'
 
 
-class PublicationsTemplateView(TemplateView):
+class OutputsPublicationsTemplateView(TemplateView):
     """
     Class-based view to show the publications template
     """
