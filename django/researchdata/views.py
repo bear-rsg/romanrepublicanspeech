@@ -81,13 +81,11 @@ class OratorsInPassagesListView(ListView):
     """
     template_name = 'researchdata/dblist-oratorsinpassages.html'
     model = models.OratorInPassage
-    # paginate_by = 250
 
     def get_queryset(self):
         queryset = self.model.objects.all()
         if not self.request.user.is_staff:
             queryset = queryset.filter(published=True)
-        queryset = queryset.filter(precise_date__isnull=False)
         return queryset.distinct()
 
     def get_context_data(self, **kwargs):
