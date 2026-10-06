@@ -1,9 +1,12 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.generic import ListView, DetailView, TemplateView
+from django.views.decorators.http import require_POST
 from django.urls import reverse
+from django.apps import apps
 from datetime import datetime
 from . import models
 import csv
+import json
 
 
 class DbListHelpTemplateView(TemplateView):
@@ -19,6 +22,11 @@ class OratorsListView(ListView):
     """
     template_name = 'researchdata/dblist-orators.html'
     model = models.Orator
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['model_name'] = 'Orator'
+        return context
 
 
 class OratorsDetailView(DetailView):
@@ -44,6 +52,11 @@ class PassagesListView(ListView):
     template_name = 'researchdata/dblist-passages.html'
     model = models.Passage
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['model_name'] = 'Passage'
+        return context
+
 
 class PassagesDetailView(DetailView):
     """
@@ -68,12 +81,19 @@ class OratorsInPassagesListView(ListView):
     """
     template_name = 'researchdata/dblist-oratorsinpassages.html'
     model = models.OratorInPassage
+    # paginate_by = 250
 
     def get_queryset(self):
         queryset = self.model.objects.all()
         if not self.request.user.is_staff:
             queryset = queryset.filter(published=True)
+        queryset = queryset.filter(precise_date__isnull=False)
         return queryset.distinct()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['model_name'] = 'OratorInPassage'
+        return context
 
 
 class OratorsInPassagesDetailView(DetailView):
@@ -129,6 +149,11 @@ class OratorsInCiceroBrutusListView(ListView):
     template_name = 'researchdata/dblist-oratorsincicerobrutus.html'
     model = models.OratorInCiceroBrutus
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['model_name'] = 'OratorInCiceroBrutus'
+        return context
+
 
 class OratorsInCiceroBrutusDetailView(DetailView):
     """
@@ -150,28 +175,48 @@ class OratorsInCiceroBrutusDetailView(DetailView):
         return context
 
 
-def export_csv(request):
+@require_POST
+def download_csv(request):
     """
-    Returns a CSV file containing all OratorInPassage objects
+    Functional view to download data as a CSV file for the specified model
     """
 
-    # Define data
-    queryset = models.OratorInPassage.objects.all()
-    # Prepare response
-    response = HttpResponse(content_type='text/csv')
-    now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    response['Content-Disposition'] = f'attachment; filename="data_export_{now}.csv"'
-    # Setup the CSV Writer
+    try:
+        data = json.loads(request.body)
+        model = data.get('model', None)
+        object_ids = data.get('objects', [])
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    if not model:
+        return JsonResponse({"error": "No model provided"}, status=400)
+    if not object_ids:
+        return JsonResponse({"error": "No object IDs provided"}, status=400)
+
+    # Get model class from model string
+    model_class = apps.get_model(f'researchdata.{model}')
+
+    # Filter the Record model by the extracted IDs
+    records = model_class.objects.all()
+    if not request.user.is_staff:
+        records = records.filter(published=True)
+    if type(object_ids) is list:
+        records = records.filter(id__in=object_ids)
+
+    # Set up the HTTP response to act as a downloadable CSV
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    response = HttpResponse(
+        content_type='text/csv',
+        headers={'Content-Disposition': f'attachment; filename="RRS_{model}_{timestamp}.csv"'},
+    )
+
     writer = csv.writer(response)
 
-    if queryset is not None:
-        # Write header row to CSV file
-        field_names = [field.name for field in queryset.model._meta.fields]
-        writer.writerow(field_names)
-        # Write the data rows to CSV file
-        for obj in queryset:
-            # Extract the value for each field on the current object
-            row = [getattr(obj, field) for field in field_names]
-            writer.writerow(row)
+    # Dynamically get all field names (headers) from the Record model
+    field_names = [field.name for field in model_class._meta.fields]
+    writer.writerow(field_names)
+
+    # Loop through the queryset and write each record's data to the CSV
+    for record in records:
+        writer.writerow([getattr(record, field) for field in field_names])
 
     return response

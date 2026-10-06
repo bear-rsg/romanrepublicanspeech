@@ -6,18 +6,9 @@
 <div id="dblist">
     <!-- Header -->
     <div id="dblist-header">
-        <!-- View -->
-        <div id="dblist-header-view">
-            <label for="dblist-header-view-select">View</label>
-            <select id="dblist-header-view-select">
-                <option value="oratorsinpassages">Orators in Passages</option>
-                <option value="orators">Orators</option>
-                <option value="passages">Passages</option>
-                <option value="oratorsincicerobrutus">Orators in Cicero Brutus</option>
-            </select>
-        </div>
         <!-- Search -->
         <div id="dblist-header-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="dblist-header-search-input" name="search" title="search" placeholder="Search">
         </div>
         <!-- Zoom -->
@@ -32,49 +23,57 @@
                 <i class="fas fa-info-circle"></i> Help Guide
             </a>
         </div>
+        <!-- Download CSV -->
+        <div id="dblist-header-downloadcsv">
+            <button><i class="fa-solid fa-circle-down"></i> Download CSV</button>
+        </div>
+        <!-- Show All Records -->
+        <div id="dblist-header-showall">
+            <button><i class="fa-solid fa-circle-check"></i> Show All Records</button>
+        </div>
+        <!-- Records Count -->
+        <div id="dblist-header-recordcounts"></div>
     </div>
     <!-- Body -->
     <div id="dblist-body">
         <!-- Main data table -->
-        <table>
-            <thead>
-                <tr>
-                    <th>Row</th>
-                    {% block dblistbodytitles %}{% endblock %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for object in object_list %}
-                    <tr title="{{ object }}" data-id="{{ object.id }}">
-                        <td>{{ forloop.counter }}</td>
-                        {% block dblistbodydata %}{% endblock %}
+        <div class="tablecontainer">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="fixed">Row</th>
+                        {% block dblistbodytitles %}{% endblock %}
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for object in object_list %}
+                        <tr title="{{ object }}" data-id="{{ object.id }}">
+                            <td class="fixed">{{ forloop.counter }}</td>
+                            {% block dblistbodydata %}{% endblock %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         <!-- Pop up menu when clicking on thead cells -->
         <div id="dblist-body-thead-menu">
             <div class="dblist-body-thead-menu-header">
-                <span id="menuColumnName">Options</span>
-                <button class="close-btn" id="closeMenu">&times;</button>
+                <span id="dblist-body-thead-menu-header-columnname">Options</span>
+                <button id="dblist-body-thead-menu-header-closemenu">&times;</button>
             </div>
-            
-            <div class="dblist-body-thead-menu-section">
-                <button class="dblist-body-thead-menu-btn" id="sortAsc">Sort Ascending (A-Z)</button>
-                <button class="dblist-body-thead-menu-btn" id="sortDesc">Sort Descending (Z-A)</button>
+            <div class="dblist-body-thead-menu-section" id="dblist-body-thead-menu-sort">
+                <div class="dblist-body-thead-menu-section-title">Sort</div>
+                <button class="dblist-body-thead-menu-btn" id="dblist-body-thead-menu-sort-asc">Asc (A-Z)</button>
+                <button class="dblist-body-thead-menu-btn" id="dblist-body-thead-menu-sort-desc">Desc (Z-A)</button>
             </div>
-            
-            <div class="dblist-body-thead-menu-section" id="filterContainer">
-                <strong>Filter by:</strong><br>
-                <div style="margin-top: 5px;">
-                    <button class="filter-action-btn" id="selectAllFilters">Select All</button>
-                    <button class="filter-action-btn" id="unselectAllFilters">Unselect All</button>
+            <div class="dblist-body-thead-menu-section" id="dblist-body-thead-menu-filter">
+                <div class="dblist-body-thead-menu-section-title">Filter</div>
+                <button class="dblist-body-thead-menu-btn" id="dblist-body-thead-menu-filter-selectall">Select All</button>
+                <button class="dblist-body-thead-menu-btn" id="dblist-body-thead-menu-filter-unselectall">Unselect All</button>
+                <div>
+                    <input id="dblist-body-thead-menu-filter-search" placeholder="Search in filters" title="Search in filters">
                 </div>
-                <div id="filterList"></div>
-            </div>
-            
-            <div class="dblist-body-thead-menu-section">
-                <button class="dblist-body-thead-menu-btn" id="clearFilter">Clear All Filters</button>
+                <div id="dblist-body-thead-menu-filter-list"></div>
             </div>
         </div>
     </div>
@@ -83,19 +82,11 @@
 <script>
 $(document).ready(function(){
 
-    // Navigate to the page when user changes the 'view' select list
-    $('#dblist-header-view-select').change(function(){
-        window.location.href = '/data/' + this.value;
-    });
-
-    // Load view from url
-    $('#dblist-header-view-select').val(window.location.pathname.split('/').filter(Boolean).pop());
-
     // Wrap every table cell with a class
     $('table td').wrapInner('<div class="cell-wrapper"></div>');
 
     // Clicking on a cell will expand/collapse the content for that row
-    $('table td').on('click', function() {
+    $('table td').on('click', function(){
         $(this).closest('tr').toggleClass('expanded');
     });
 
@@ -111,20 +102,50 @@ $(document).ready(function(){
     });
 
     // Listen for changes on the range slider
-    $('#dblist-header-zoom-input').on('input change', function() {
+    $('#dblist-header-zoom-input').on('input change', function(){
         var currentSize = $(this).val();
-        $('#dblist-body table').css('font-size', currentSize + 'rem');
+        $('#dblist-body table').css('font-size', currentSize + 'em');
         $('#dblist-header-zoom-value').text(Math.round(currentSize * 100) + '%');
+        applyFixedColumnOffsets();
     });
+
+    //
+    // Record counts
+    //
+
+    const allRecordsCount = $('#dblist-body tbody tr').length;
+
+    function getRecordsCount(){
+        return $('#dblist-body tbody tr:visible').length;
+    }
+
+    function allRecordsAreShowing(){
+        return allRecordsCount === getRecordsCount();
+    }
+
+    function setRecordsCountText(){
+        let text = `${allRecordsCount} records`;
+        if (!allRecordsAreShowing()) text = `Showing ${getRecordsCount()} of ${allRecordsCount} records`;
+        $('#dblist-header-recordcounts').text(text);
+    }
+
+    setRecordsCountText();
 
     //
     // Search, filter, sort
     //
 
+    // Show/hide the 'show all records' button, depending on if all records are already shown
+    function setShowAllRecordsBtnVisibility(){
+        let btn = $('#dblist-header-showall');
+        if (allRecordsCount !== getRecordsCount()) btn.css('display', 'inline-block');
+        else btn.hide();
+    }
+
     // Listen to the free-text search box
-    $('#dblist-header-search-input').on('input', function() {
+    $('#dblist-header-search-input').on('input', function(){
         applyCurrentFilters(); 
-    });
+    }).val('');
 
     let currentColumnIndex = -1;
     
@@ -132,13 +153,13 @@ $(document).ready(function(){
     // Format: { columnIndex: ['Value1', 'Value2'] }
     let filterState = {}; 
 
-    // 1. Show popup when clicking a header
-    $('#dblist-body table th').on('click', function(e) {
+    // Show popup when clicking a header
+    $('#dblist-body table th').on('click', function(e){
         currentColumnIndex = $(this).index();
         let thOffset = $(this).offset();
         let columnName = $(this).text();
 
-        $('#menuColumnName').text(columnName);
+        $('#dblist-body-thead-menu-header-columnname').text(columnName);
 
         // Populate filter options based on the global state
         populateFilters(currentColumnIndex);
@@ -151,68 +172,84 @@ $(document).ready(function(){
         e.stopPropagation(); 
     });
 
-    // 2. Dismissal Logic
-    $(document).on('click', function(e) {
-        if (!$(e.target).closest('#dblist-body-thead-menu, th').length) {
+    // Dismissal Logic
+    $(document).on('click', function(e){
+        if (!$(e.target).closest('#dblist-body-thead-menu, th').length){
             $('#dblist-body-thead-menu').hide();
         }
     });
 
-    $('#dblist-body-thead-menu').on('click', function(e) {
+    $('#dblist-body-thead-menu').on('click', function(e){
         e.stopPropagation(); 
     });
 
-    $('#closeMenu').on('click', function() {
+    $('#dblist-body-thead-menu-header-closemenu').on('click', function(){
         $('#dblist-body-thead-menu').hide();
     });
 
-    // 3. Extract unique values and build checkboxes based on State
-    function populateFilters(colIndex) {
-        let uniqueValues = new Set();
+    // Extract unique values and build checkboxes based on State
+    function populateFilters(colIndex){
+        // Use a Map instead of a Set to track both the value and its count
+        let valueCounts = new Map();
         
         // Always read from ALL rows so options don't disappear when filtered
-        $('#dblist-body table tbody tr').each(function() {
+        $('#dblist-body table tbody tr:visible').each(function(){
             let cellText = $(this).find('td').eq(colIndex).text().trim();
-            uniqueValues.add(cellText);
+            
+            // If the value exists, increment its count. Otherwise, set it to 1.
+            let currentCount = valueCounts.get(cellText) || 0;
+            valueCounts.set(cellText, currentCount + 1);
         });
 
         let html = '';
-        Array.from(uniqueValues).sort().forEach(val => {
-            // Check for empty string first, then handle the 50-char truncation
-            let displayVal = val === "" ? "[Blank cell]" : (val.length > 50 ? val.substring(0, 50) + '...' : val);
+
+        // Extract the unique keys, sort them, and iterate
+        Array.from(valueCounts.keys()).sort().forEach(val => {
+            let count = valueCounts.get(val);
             
-            // Also update the hover title so it doesn't show a blank tooltip
-            let hoverTitle = val === "" ? "[Blank cell]" : val;
+            // Check for empty string first, then handle the 50-char truncation
+            let baseDisplayVal = val === "" ? "[Blank cell]" : (val.length > 50 ? val.substring(0, 50) + '...' : val);
+            
+            // Prepend the count to the display text
+            let displayVal = `(${count}) ${baseDisplayVal}`;
+            
+            // Update the hover title to include the count and handle blank cells
+            let hoverTitle = val === "" ? `(${count}) [Blank cell]` : `(${count}) ${val}`;
             
             // Check state: If column isn't in filterState, default to checked.
             let isChecked = true;
-            if (filterState[colIndex] !== undefined) {
+            if (typeof filterState !== 'undefined' && filterState[colIndex] !== undefined){
                 isChecked = filterState[colIndex].includes(val);
             }
             let checkedAttr = isChecked ? 'checked' : '';
 
-            html += `<label class="filter-item" title="${hoverTitle}">
-                        <input type="checkbox" class="col-filter-check" value="${val}" ${checkedAttr}> 
+            // ESCAPE QUOTES: Prevent double quotes from breaking the HTML attributes
+            let safeVal = val.replace(/"/g, '&quot;');
+            let safeHoverTitle = hoverTitle.replace(/"/g, '&quot;');
+
+            // Note: The input 'value' attribute remains just the raw 'val' so filtering still works
+            html += `<label class="filter-item" title="${safeHoverTitle}">
+                        <input type="checkbox" class="col-filter-check" value="${safeVal}" ${checkedAttr}> 
                         ${displayVal}
-                     </label>`;
+                    </label>`;
         });
-        
-        $('#filterList').html(html);
+
+        $('#dblist-body-thead-menu-filter-list').html(html);
     }
 
-    // 4. Update State and Apply Multi-Column Filters
-    function applyCurrentFilters() {
+    // Update State and Apply Multi-Column Filters
+    function applyCurrentFilters(){
         let selectedValues = [];
         let totalCheckboxes = $('.col-filter-check').length;
-        
+
         // Grab the search term and make it lowercase for case-insensitive matching
         let searchTerm = $('#dblist-header-search-input').val().toLowerCase().trim();
-        
-        $('.col-filter-check:checked').each(function() {
+
+        $('.col-filter-check:checked').each(function(){
             selectedValues.push($(this).val());
         });
 
-        if (selectedValues.length === totalCheckboxes) {
+        if (selectedValues.length === totalCheckboxes){
             delete filterState[currentColumnIndex];
             $('#dblist-body table th').eq(currentColumnIndex).removeClass('filter-active');
         } else {
@@ -221,71 +258,90 @@ $(document).ready(function(){
         }
 
         // Loop through all rows and test against BOTH the Brain and the Search Box
-        $('#dblist-body table tbody tr').each(function() {
+        $('#dblist-body table tbody tr').each(function(){
             let row = $(this);
             let showRow = true; // Assume true until proven otherwise
 
-            // 1. Test against the Brain (Checkbox Filters)
-            for (let col in filterState) {
+            // Test against the Brain (Checkbox Filters)
+            for (let col in filterState){
                 let cellValue = row.find('td').eq(col).text().trim();
-                if (!filterState[col].includes(cellValue)) {
+                if (!filterState[col].includes(cellValue)){
                     showRow = false;
                     break; 
                 }
             }
 
-            // 2. Test against the Search Box (if the row passed the checkbox test)
-            if (showRow && searchTerm !== "") {
+            // Test against the Search Box (if the row passed the checkbox test)
+            if (showRow && searchTerm !== ""){
                 // Get all text in the row, make it lowercase, and search it
                 let rowText = row.text().toLowerCase();
-                if (!rowText.includes(searchTerm)) {
+                if (!rowText.includes(searchTerm)){
                     showRow = false;
                 }
             }
 
-            // 3. Execute
+            // Execute
             if (showRow) row.show();
             else row.hide();
         });
 
         updateRecordCount();
+        applyFixedColumnOffsets();
+        setShowAllRecordsBtnVisibility();
+        setRecordsCountText();
     }
 
+    // This filters the checkboxes inside the popup menu as you type
+    $('#dblist-body-thead-menu-filter-search').on('input', function(){
+        let searchTerm = $(this).val().toLowerCase().trim();
+        // Look at every label in the current popup menu
+        $('#dblist-body-thead-menu-filter-list .filter-item').each(function(){
+            let labelText = $(this).text().toLowerCase();
+            // Hide/Show the checkbox option based on the text
+            if (labelText.includes(searchTerm)) $(this).show();
+            else $(this).hide();
+        });
+    });
+
     // Attach listener to dynamically created checkboxes
-    $('#filterList').on('change', '.col-filter-check', function() {
+    $('#dblist-body-thead-menu-filter-list').on('change', '.col-filter-check', function(){
         applyCurrentFilters();
     });
 
-    // 5. Select / Unselect All
-    $('#selectAllFilters').on('click', function() {
+    // Select / Unselect All
+    $('#dblist-body-thead-menu-filter-selectall').on('click', function(){
         $('.col-filter-check').prop('checked', true);
         applyCurrentFilters();
     });
 
-    $('#unselectAllFilters').on('click', function() {
+    $('#dblist-body-thead-menu-filter-unselectall').on('click', function(){
         $('.col-filter-check').prop('checked', false);
         applyCurrentFilters();
     });
 
-    // 6. Clear ALL Filters (Resets table entirely)
-    $('#clearFilter').on('click', function() {
+    // Clear ALL Filters (Resets table entirely)
+    $('#dblist-header-showall button').on('click', function(){
         filterState = {}; // Wipe the brain
+        $('#dblist-header-search-input').val('');
         $('#dblist-body table tbody tr').show();
         $('#dblist-body table th').removeClass('filter-active');
         $('#dblist-body-thead-menu').hide();
 
         updateRecordCount();
+        applyFixedColumnOffsets();
+        setShowAllRecordsBtnVisibility();
+        setRecordsCountText();
     });
 
-    // 7. Sorting Logic (Naturally single-column)
-    function sortTable(order) {
+    // Sorting Logic (Naturally single-column)
+    function sortTable(order){
         let rows = $('#dblist-body table tbody tr').get();
         
-        rows.sort(function(a, b) {
+        rows.sort(function(a, b){
             let valA = $(a).find('td').eq(currentColumnIndex).text().trim().toLowerCase();
             let valB = $(b).find('td').eq(currentColumnIndex).text().trim().toLowerCase();
 
-            if (!isNaN(valA) && !isNaN(valB)) {
+            if (!isNaN(valA) && !isNaN(valB)){
                 valA = parseFloat(valA);
                 valB = parseFloat(valB);
             }
@@ -295,26 +351,119 @@ $(document).ready(function(){
             return 0;
         });
 
-        $.each(rows, function(index, row) {
+        $.each(rows, function(index, row){
             $('#dblist-body table tbody').append(row);
         });
 
         $('#dblist-body-thead-menu').hide();
     }
 
-    $('#sortAsc').on('click', function() { sortTable('asc'); });
-    $('#sortDesc').on('click', function() { sortTable('desc'); });
+    $('#dblist-body-thead-menu-sort-asc').on('click', function(){ sortTable('asc'); });
+    $('#dblist-body-thead-menu-sort-desc').on('click', function(){ sortTable('desc'); });
 
     // Calculate and update the visible record count
-    function updateRecordCount() {
+    function updateRecordCount(){
         let totalRows = $('#datatable tbody tr').length;
         let visibleRows = $('#datatable tbody tr:visible').length;
-        if (visibleRows === totalRows) {
+        if (visibleRows === totalRows){
             $('#showing').text(`Showing ${visibleRows} records`);
         } else {
             $('#showing').text(`Showing ${visibleRows} records of ${totalRows}`);
         }
     }
+
+    // Handle the left offset for fixed/frozen columns in the main table
+    function applyFixedColumnOffsets(){
+        let table = $('#dblist-body table');
+        // Only run if there's fixed columns in table
+        if (table.find('th.fixed').length > 1){
+            let offsets = [];
+            let currentOffset = 0;
+            // Find all columns marked 'fixed' in the first row (usually the header)
+            let $fixedHeaders = table.find('tr:first').children('.fixed');
+            // Calculate the cumulative left offset for each fixed column
+            $fixedHeaders.each(function(){
+                offsets.push(currentOffset);
+                currentOffset += $(this).outerWidth();
+            });
+            // Apply the calculated 'left' property to the .fixed cells in every row
+            table.find('tr').each(function(){
+                let $rowFixedCells = $(this).children('.fixed');
+                $rowFixedCells.each(function(index){
+                    $(this).css('left', (offsets[index] - 0) + 'px');
+                    // Apply the solid 2px black line to the very last fixed column in the sequence
+                    if (index === $rowFixedCells.length - 1) $(this).css('box-shadow', '2px 0 0 0 black');
+                });
+            });
+        }
+    }
+
+    // Apply on page load (and also elsewhere in this script when table changes)
+    applyFixedColumnOffsets();
+
+
+    //
+    // Download CSV
+    //
+
+    $('#dblist-header-downloadcsv button').click(function(e){
+        e.preventDefault();
+
+        // Set objectIds to list of visible objects (or * if all are showing)
+        let objectIds = '*';
+        if (!allRecordsAreShowing()){
+            objectIds = [];
+            $('#dblist-body tbody tr:visible').each(function(){
+                let id = $(this).attr('data-id');
+                if (id) objectIds.push(id);
+            });
+            // If no records to show, then alert user
+            if (objectIds.length === 0){
+                alert("No records found to download.");
+                return;
+            }
+        }
+
+        // Send POST request
+        $.ajax({
+            url: "{% url 'researchdata:download-csv' %}", 
+            type: 'POST',
+            data: JSON.stringify({ 'objects': objectIds, 'model': '{{ model_name }}' }),
+            contentType: 'application/json',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            xhrFields: {
+                responseType: 'blob' // Required to handle the binary file download
+            },
+            success: function(blob, status, xhr){
+                // Handle the file download in the browser
+                let filename = 'records_download.csv';
+                // Attempt to extract the exact filename from the Content-Disposition header
+                let disposition = xhr.getResponseHeader('Content-Disposition');
+                if (disposition && disposition.indexOf('attachment') !== -1){
+                    let matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
+                    if (matches != null && matches[1]){
+                        filename = matches[1].replace(/['"]/g, '');
+                    }
+                }
+                // Create a temporary hidden link to trigger the download prompt
+                let link = document.createElement('a');
+                let url = window.URL.createObjectURL(blob);
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                // Cleanup
+                window.URL.revokeObjectURL(url);
+                $(link).remove();
+            },
+            error: function(xhr, status, error){
+                console.error("Error downloading CSV:", error);
+                alert("Failed to download the file.");
+            }
+        });
+    });
 
 });
 </script>

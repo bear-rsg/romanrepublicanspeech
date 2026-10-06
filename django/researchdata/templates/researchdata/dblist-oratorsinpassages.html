@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block dblistbodytitles %}
-<th>Passage</th>
-<th>Orator</th>
+<th class="fixed">Passage</th>
+<th class="fixed">Orator</th>
 <th>Oratorical exemplum</th>
 <th>Oratorical exemplum type</th>
 <th>Content summary</th>
@@ -18,6 +18,7 @@
 <th>Non-magistrate senator</th>
 <th>Time period</th>
 <th>Precise date</th>
+<th>Precise date order</th>
 <th>Court type</th>
 <th>Court type details</th>
 <th>Liminal speaker (non-elite)</th>
@@ -30,8 +31,8 @@
 {% endblock %}
 
 {% block dblistbodydata %}
-<td>{% if object.passage %}{{ object.passage }}{% endif %}</td>
-<td>{% if object.orator %}{{ object.orator }}{% endif %}</td>
+<td class="fixed">{% if object.passage %}{{ object.passage }}{% endif %}</td>
+<td class="fixed">{% if object.orator %}{{ object.orator }}{% endif %}</td>
 <td>{% if object.oratorical_exemplum %}{{ object.oratorical_exemplum }}{% endif %}</td>
 <td>{% if object.oratorical_exemplum_type %}{{ object.oratorical_exemplum_type }}{% endif %}</td>
 <td>{% if object.content_summary %}{{ object.content_summary }}{% endif %}</td>
@@ -46,6 +47,7 @@
 <td>{% if object.non_magistrate_senator %}{{ object.non_magistrate_senator }}{% endif %}</td>
 <td>{% if object.time_period %}{{ object.time_period }}{% endif %}</td>
 <td>{% if object.precise_date %}{{ object.precise_date }}{% endif %}</td>
+<td>{% if object.precise_date_order %}{{ object.precise_date_order }}{% endif %}</td>
 <td>{% if object.court_type %}{{ object.court_type }}{% endif %}</td>
 <td>{% if object.court_type_details %}{{ object.court_type_details }}{% endif %}</td>
 <td>{% if object.liminal_speaker_non_elite %}{{ object.liminal_speaker_non_elite }}{% endif %}</td>
