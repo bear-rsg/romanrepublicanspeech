@@ -158,6 +158,7 @@ class OratorInPassageAdminView(GenericAdminView):
         'content',
         'court_type',
         'athens',
+        'forensic',
         'non_magistrate_senator',
         'liminal_speaker_non_elite',
         'liminal_speaker_non_roman',
