@@ -210,7 +210,7 @@ def download_csv(request):
     )
 
     writer = csv.writer(response)
-    
+
     # Dynamically get all field names (headers) from the Record model
     field_names = [field.name for field in model_class._meta.fields]
     writer.writerow(field_names)
