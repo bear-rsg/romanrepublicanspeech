@@ -81,7 +81,7 @@ class OratorsInPassagesListView(ListView):
     """
     template_name = 'researchdata/dblist-oratorsinpassages.html'
     model = models.OratorInPassage
-    paginate_by = 250
+    # paginate_by = 250
 
     def get_queryset(self):
         queryset = self.model.objects.all()
