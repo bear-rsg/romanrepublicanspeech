@@ -1,5 +1,6 @@
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import ListView, DetailView, TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.http import require_POST
 from django.urls import reverse
 from django.apps import apps
@@ -9,14 +10,14 @@ import csv
 import json
 
 
-class DbListHelpTemplateView(TemplateView):
+class DbListHelpTemplateView(LoginRequiredMixin, TemplateView):
     """
     Class-based view for db list help template
     """
     template_name = 'researchdata/dblisthelp.html'
 
 
-class OratorsListView(ListView):
+class OratorsListView(LoginRequiredMixin, ListView):
     """
     Class-based view for orators list template
     """
@@ -29,7 +30,7 @@ class OratorsListView(ListView):
         return context
 
 
-class OratorsDetailView(DetailView):
+class OratorsDetailView(LoginRequiredMixin, DetailView):
     """
     Class-based view for orators detail template
     """
@@ -45,7 +46,7 @@ class OratorsDetailView(DetailView):
         return context
 
 
-class PassagesListView(ListView):
+class PassagesListView(LoginRequiredMixin, ListView):
     """
     Class-based view for passages list template
     """
@@ -58,7 +59,7 @@ class PassagesListView(ListView):
         return context
 
 
-class PassagesDetailView(DetailView):
+class PassagesDetailView(LoginRequiredMixin, DetailView):
     """
     Class-based view for passages detail template
     """
@@ -75,12 +76,13 @@ class PassagesDetailView(DetailView):
         return context
 
 
-class OratorsInPassagesListView(ListView):
+class OratorsInPassagesListView(LoginRequiredMixin, ListView):
     """
     Class-based view for oratorsinpassages list template
     """
     template_name = 'researchdata/dblist-oratorsinpassages.html'
     model = models.OratorInPassage
+    # paginate_by = 250
 
     def get_queryset(self):
         queryset = self.model.objects.all()
@@ -94,7 +96,7 @@ class OratorsInPassagesListView(ListView):
         return context
 
 
-class OratorsInPassagesDetailView(DetailView):
+class OratorsInPassagesDetailView(LoginRequiredMixin, DetailView):
     """
     Class-based view for oratorsinpassages detail template
     """
@@ -141,7 +143,7 @@ class OratorsInPassagesDetailView(DetailView):
         return context
 
 
-class OratorsInCiceroBrutusListView(ListView):
+class OratorsInCiceroBrutusListView(LoginRequiredMixin, ListView):
     """
     Class-based view for orators in cicero brutus list template
     """
@@ -154,7 +156,7 @@ class OratorsInCiceroBrutusListView(ListView):
         return context
 
 
-class OratorsInCiceroBrutusDetailView(DetailView):
+class OratorsInCiceroBrutusDetailView(LoginRequiredMixin, DetailView):
     """
     Class-based view for orators in cicero brutus detail template
     """
