@@ -137,6 +137,7 @@ class OratorInPassageAdminView(GenericAdminView):
         'id',
         'passage',
         'orator',
+        'order_in_passage',
         'content_summary',
         'speeches',
         'content',

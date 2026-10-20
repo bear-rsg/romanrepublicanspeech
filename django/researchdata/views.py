@@ -82,10 +82,22 @@ class OratorsInPassagesListView(LoginRequiredMixin, ListView):
     """
     template_name = 'researchdata/dblist-oratorsinpassages.html'
     model = models.OratorInPassage
-    # paginate_by = 250
+    # paginate_by = 500
 
     def get_queryset(self):
-        queryset = self.model.objects.all()
+        queryset = self.model.objects.all().select_related(
+            'passage',
+            'orator',
+            'oratorical_episode',
+            'oratorical_exemplum_type',
+            'speech_type',
+            'venue',
+            'venue_type',
+            'citizen_status',
+            'time_period',
+            'court_type',
+            'cicero_as_source',
+        )
         if not self.request.user.is_staff:
             queryset = queryset.filter(published=True)
         return queryset.distinct()

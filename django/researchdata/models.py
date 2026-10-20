@@ -176,6 +176,7 @@ class OratorInPassage(models.Model):
 
     passage = models.ForeignKey(Passage, related_name=related_name, on_delete=models.RESTRICT)
     orator = models.ForeignKey(Orator, related_name=related_name, on_delete=models.RESTRICT, blank=True, null=True)
+    order_in_passage = models.IntegerField(default=1)
     oratorical_episode = models.ForeignKey(OratoricalEpisode, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
     oratorical_exemplum = models.BooleanField(default=True)
     oratorical_exemplum_type = models.ForeignKey(OratoricalExemplumType, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
@@ -211,7 +212,7 @@ class OratorInPassage(models.Model):
         return reverse('researchdata:dbdetail-oratorsinpassages', args=[str(self.id)])
 
     class Meta:
-        ordering = ['passage', 'orator', 'id']
+        ordering = ['passage', 'order_in_passage', 'orator', 'id']
         verbose_name_plural = 'orators in passages'
 
 

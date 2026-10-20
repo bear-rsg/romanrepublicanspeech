@@ -47,6 +47,9 @@ def insert_initial_orator_in_passage(apps, schema_editor):
             # Get the Work object that all created Passage objects belong to
             work = models.Work.objects.get(name='Facta et dicta memorabilia')
 
+            # Counter to track order of orator in passage
+            order_in_passage = 1
+
             for record in records:
                 # Create the OratorInPassage object, if mandatory data exists and is not a duplicate
                 passage = record['passage']
@@ -58,9 +61,19 @@ def insert_initial_orator_in_passage(apps, schema_editor):
                 if passage and is_new_oip:
                     # Create with mandatory fields
                     with transaction.atomic():
+                        passage_obj, passage_is_new = models.Passage.objects.get_or_create(name=passage, work=work)
+                        # If creating new passage, reset the counter
+                        if passage_is_new:
+                            order_in_passage = 1
+                        # If this passage exists, increase the value by 1
+                        else:
+                            order_in_passage = models.OratorInPassage.objects.filter(passage__name=passage)\
+                                .order_by('-order_in_passage').values_list('order_in_passage', flat=True).first() + 1
+                        # Create oip object
                         oip_object = models.OratorInPassage.objects.create(
-                            passage=models.Passage.objects.get_or_create(name=passage, work=work)[0],
-                            orator=models.Orator.objects.get_or_create(name=orator)[0]
+                            passage=passage_obj,
+                            orator=models.Orator.objects.get_or_create(name=orator)[0],
+                            order_in_passage=order_in_passage
                         )
                         # Add data for optional fields
                         if len(record['oratorical_exemplum_type']):
