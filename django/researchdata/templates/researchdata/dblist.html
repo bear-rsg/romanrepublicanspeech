@@ -294,14 +294,23 @@ $(document).ready(function(){
     // This filters the checkboxes inside the popup menu as you type
     $('#dblist-body-thead-menu-filter-search').on('input', function(){
         let searchTerm = $(this).val().toLowerCase().trim();
+
+        // Unselect all existing, if a search term is provided
+        if (searchTerm.length > 0) $('#dblist-body-thead-menu-filter-unselectall').trigger('click');
+        // Select all existing, if search term is blank
+        else $('#dblist-body-thead-menu-filter-selectall').trigger('click');
+
         // Look at every label in the current popup menu
         $('#dblist-body-thead-menu-filter-list .filter-item').each(function(){
             let labelText = $(this).text().toLowerCase();
             // Hide/Show the checkbox option based on the text
-            if (labelText.includes(searchTerm)) $(this).show();
-            else $(this).hide();
+            if (labelText.includes(searchTerm)) $(this).show().find('input').prop("checked", true);
+            else $(this).hide().find('input').prop("checked", false);
         });
-    });
+
+        // Update the results
+        applyCurrentFilters();
+    }).val('');  // Prevent old search terms caching and reloading on page refresh
 
     // Attach listener to dynamically created checkboxes
     $('#dblist-body-thead-menu-filter-list').on('change', '.col-filter-check', function(){
@@ -334,27 +343,46 @@ $(document).ready(function(){
     });
 
     // Sorting Logic (Naturally single-column)
-    function sortTable(order){
-        let rows = $('#dblist-body table tbody tr').get();
-        
-        rows.sort(function(a, b){
-            let valA = $(a).find('td').eq(currentColumnIndex).text().trim().toLowerCase();
-            let valB = $(b).find('td').eq(currentColumnIndex).text().trim().toLowerCase();
+    function sortTable(order) {
+        let $tbody = $('#dblist-body table tbody');
+        let rows = $tbody.find('tr').get();
+        let dir = order === 'asc' ? 1 : -1;
 
-            if (!isNaN(valA) && !isNaN(valB)){
-                valA = parseFloat(valA);
-                valB = parseFloat(valB);
+        rows.sort(function(a, b) {
+            let rawA = $(a).children('td').eq(currentColumnIndex).text().trim();
+            let rawB = $(b).children('td').eq(currentColumnIndex).text().trim();
+
+            // 1. Always push empty cells to the very bottom
+            if (rawA === '' && rawB === '') return 0;
+            if (rawA === '') return 1;
+            if (rawB === '') return -1;
+
+            // Normalize Unicode minus/en-dash only for numeric testing
+            let normA = rawA.replace(/^[\u2212\u2013\u2014]/, '-');
+            let normB = rawB.replace(/^[\u2212\u2013\u2014]/, '-');
+
+            let numA = Number(normA);
+            let numB = Number(normB);
+            let isNumA = !Number.isNaN(numA);
+            let isNumB = !Number.isNaN(numB);
+
+            // 2. Both are valid numbers (handles negatives, decimals, and positives)
+            if (isNumA && isNumB) {
+                return (numA - numB) * dir;
             }
 
-            if (valA < valB) return order === 'asc' ? -1 : 1;
-            if (valA > valB) return order === 'asc' ? 1 : -1;
-            return 0;
+            // 3. Mixed column safety: always group numbers before text strings
+            // Prevents transitivity bugs if a numeric column has a stray text note
+            if (isNumA !== isNumB) {
+                return (isNumA ? -1 : 1) * dir;
+            }
+
+            // 4. Both are text strings: case-insensitive natural sort
+            // Automatically handles "Item 2" before "Item 10" and standard A-Z
+            return rawA.localeCompare(rawB, undefined, { numeric: true, sensitivity: 'base' }) * dir;
         });
 
-        $.each(rows, function(index, row){
-            $('#dblist-body table tbody').append(row);
-        });
-
+        $tbody.append(rows);
         $('#dblist-body-thead-menu').hide();
     }
 

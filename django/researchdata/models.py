@@ -176,7 +176,7 @@ class OratorInPassage(models.Model):
 
     passage = models.ForeignKey(Passage, related_name=related_name, on_delete=models.RESTRICT)
     orator = models.ForeignKey(Orator, related_name=related_name, on_delete=models.RESTRICT, blank=True, null=True)
-    order_in_passage = models.IntegerField(default=1)
+    orator_order_in_passage = models.IntegerField(default=1)
     oratorical_episode = models.ForeignKey(OratoricalEpisode, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
     oratorical_exemplum = models.BooleanField(default=True)
     oratorical_exemplum_type = models.ForeignKey(OratoricalExemplumType, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
@@ -192,8 +192,9 @@ class OratorInPassage(models.Model):
     forensic = models.BooleanField(default=False)
     non_magistrate_senator = models.BooleanField(default=False, verbose_name='non-magistrate senator')
     time_period = models.ForeignKey(TimePeriod, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
+    time_period_order = models.IntegerField(blank=True, null=True, help_text='Number used to sort records by time period (BCE = negative, CE = positive)')
     precise_date = models.CharField(max_length=1000, blank=True, null=True)
-    precise_date_order = models.IntegerField(blank=True, null=True, help_text='Number used to sort records by precise date, BC = negative, AD = positive')
+    precise_date_order = models.IntegerField(blank=True, null=True, help_text='Number used to sort records by precise date (BCE = negative, CE = positive)')
     court_type = models.ForeignKey(CourtType, related_name=related_name, on_delete=models.SET_NULL, blank=True, null=True)
     court_type_details = RichTextField(blank=True, null=True)
     liminal_speaker_non_elite = models.BooleanField(default=False)
@@ -212,7 +213,7 @@ class OratorInPassage(models.Model):
         return reverse('researchdata:dbdetail-oratorsinpassages', args=[str(self.id)])
 
     class Meta:
-        ordering = ['passage', 'order_in_passage', 'orator', 'id']
+        ordering = ['passage', 'orator_order_in_passage', 'orator', 'id']
         verbose_name_plural = 'orators in passages'
 
 

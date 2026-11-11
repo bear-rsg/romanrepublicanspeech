@@ -349,7 +349,7 @@ main a {
     overflow-x: auto;
     overflow-y: auto;
     max-width: 100%;
-    max-height: calc(100vh - 5.3em);
+    max-height: calc(100vh - 6.3em);
     font-size: 0.8em;
 }
 
