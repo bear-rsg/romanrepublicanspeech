@@ -137,7 +137,7 @@ class OratorInPassageAdminView(GenericAdminView):
         'id',
         'passage',
         'orator',
-        'order_in_passage',
+        'orator_order_in_passage',
         'content_summary',
         'speeches',
         'content',
@@ -146,6 +146,7 @@ class OratorInPassageAdminView(GenericAdminView):
         'speech_type',
         'citizen_status',
         'time_period',
+        'time_period_order',
         'precise_date_order',
     )
     list_display_links = ('id',)

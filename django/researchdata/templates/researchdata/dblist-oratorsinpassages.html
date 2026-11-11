@@ -18,8 +18,9 @@
 <th>Forensic</th>
 <th>Non-magistrate senator</th>
 <th>Time period</th>
+<th>Time period (order)</th>
 <th>Precise date</th>
-<th>Precise date order</th>
+<th>Precise date (order)</th>
 <th>Court type</th>
 <th>Court type details</th>
 <th>Liminal speaker (non-elite)</th>
@@ -48,6 +49,7 @@
 <td>{% if object.forensic %}{{ object.forensic }}{% endif %}</td>
 <td>{% if object.non_magistrate_senator %}{{ object.non_magistrate_senator }}{% endif %}</td>
 <td>{% if object.time_period %}{{ object.time_period }}{% endif %}</td>
+<td>{% if object.time_period_order %}{{ object.time_period_order }}{% endif %}</td>
 <td>{% if object.precise_date %}{{ object.precise_date }}{% endif %}</td>
 <td>{% if object.precise_date_order %}{{ object.precise_date_order }}{% endif %}</td>
 <td>{% if object.court_type %}{{ object.court_type }}{% endif %}</td>
